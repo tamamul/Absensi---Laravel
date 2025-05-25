@@ -19,5 +19,4 @@ class Ultg extends Model
     {
         return $this->belongsTo(Upt::class, 'upt_id');
     }
-    
 }

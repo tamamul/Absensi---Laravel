@@ -26,10 +26,24 @@ class Lokasikerja extends Model
     ];
 
     // relasi ke ultg
+    // public function upt()
+    // {
+    //     return $this->belongsTo(Upt::class, 'upt_id', 'id');
+    // }
+
     public function upt()
     {
-        return $this->belongsTo(Upt::class, 'upt_id', 'id');
+        // Relasi hasOneThrough
+        return $this->hasOneThrough(
+            Upt::class,
+            Ultg::class,
+            'id',         // Foreign key on ultg
+            'id',         // Foreign key on upt
+            'ultg_id',    // Local key on lokasikerja
+            'upt_id'      // Local key on ultg
+        );
     }
+
     public function ultg()
     {
         return $this->belongsTo(Ultg::class, 'ultg_id', 'id');

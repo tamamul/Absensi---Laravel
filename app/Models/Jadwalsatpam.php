@@ -9,9 +9,10 @@ class Jadwalsatpam extends Model
 {
     use HasFactory;
 
-    protected $table = 'jadwal_satpams';
+    protected $table = 'jadwal';
 
     protected $fillable = [
+        'satpam_id',
         'upt_id',
         'ultg_id',
         'lokasi_kerja_id',
@@ -35,5 +36,10 @@ class Jadwalsatpam extends Model
     public function lokasiKerja()
     {
         return $this->belongsTo(LokasiKerja::class, 'lokasi_kerja_id');
+    }
+
+    public function datasatpam()
+    {
+        return $this->belongsTo(Datasatpam::class, 'satpam_id');
     }
 }

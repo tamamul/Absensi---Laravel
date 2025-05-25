@@ -60,7 +60,7 @@
                 <tr>
                   <td>{{ $loop->iteration }}</td>
                   <td>{{ $data->id }}</td>
-                  <td>{{ $data->upt->nama_upt }}</td>
+                  <td>{{ $data->ultg->upt->nama_upt }}</td>
                   <td>{{ $data->ultg->nama_ultg }}</td>
                   <td>{{ $data->nama_lokasikerja }}</td>
                   <td>{{ $data->latitude }}</td>

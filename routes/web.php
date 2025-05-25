@@ -120,18 +120,24 @@ Route::get('lokasikerja/get-ultg/{upt_id}', [LokasikerjaController::class, 'getU
 // Route::put('jadwalsatpam/{id}', [JadwalsatpamController::class, 'update'])->name('jadwalsatpam.update');
 // Route::post('jadwalsatpam/delete/{id}', [JadwalsatpamController::class, 'destroy'])->name('jadwalsatpam.delete');
 
+// Data Jadwal Satpam
+Route::get('/jadwalsatpam', [JadwalsatpamController::class, 'index'])->name('jadwalsatpam.index');
 Route::get('/jadwalsatpam/create', [JadwalsatpamController::class, 'create'])->name('jadwalsatpam.create');
 Route::post('/jadwalsatpam', [JadwalsatpamController::class, 'store'])->name('jadwalsatpam.store');
+Route::get('/get-ultg/{uptId}', [JadwalsatpamController::class, 'getUltg']);
+Route::get('/get-lokasi/{ultgId}', [JadwalsatpamController::class, 'getLokasiKerja']);
+Route::get('/get-satpam/{lokasikerja_id}', function($lokasikerja_id) {
+    return \App\Models\Datasatpam::where('lokasikerja_id', $lokasikerja_id)->pluck('nama', 'id');
+});
 
 // Route AJAX untuk filter dinamis
-
-Route::get('/get-ultg/{uptId}', [JadwalsatpamController::class, 'getUltg']);
-Route::get('/get-lokasi-kerja/{ultgId}', [JadwalsatpamController::class, 'getLokasiKerja']);
+// Route::get('/get-ultg/{uptId}', [JadwalsatpamController::class, 'getUltg']);
+// Route::get('/get-lokasi-kerja/{ultgId}', [JadwalsatpamController::class, 'getLokasiKerja']);
 
 //Laporan
 Route::get('laporan', [LaporanController::class, 'index'])->name('laporan.index');
-Route::get('/get-ultg/{upt_id}', [LaporanController::class, 'getUltg']);
-Route::get('/get-lokasi/{ultg_id}', [LaporanController::class, 'getLokasi']);
+// Route::get('/get-ultg/{upt_id}', [LaporanController::class, 'getUltg']);
+// Route::get('/get-lokasi/{ultg_id}', [LaporanController::class, 'getLokasi']);
 Route::post('/view', [LaporanController::class, 'view'])->name('laporan.view');
 Route::post('/export-pdf', [LaporanController::class, 'exportPDF'])->name('laporan.export');
 

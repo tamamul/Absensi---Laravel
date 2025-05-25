@@ -81,8 +81,8 @@ class Datasatpam extends Model
     }
 
     // Relasi ke Lokasi Kerja
-    public function lokasiKerja()
+    public function lokasikerja()
     {
-        return $this->belongsTo(Lokasikerja::class);
+        return $this->belongsTo(Lokasikerja::class, 'lokasikerja_id');
     }
 }
