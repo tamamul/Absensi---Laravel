@@ -63,12 +63,12 @@
         </a>
     </li>
 
-    <li class="nav-item {{ \Route::is('tabel') ? 'active' : '' }}">
+    <!-- <li class="nav-item {{ \Route::is('tabel') ? 'active' : '' }}">
         <a href="/tabel">
             <i class="fas fa-th-list"></i>
             <p>Tabel</p>
         </a>
-    </li>
+    </li> -->
 @endif
 
 <!-- Hanya tampilkan menu jika role pengguna adalah Admin -->
@@ -87,7 +87,7 @@
         </a>
     </li>
 
-    <li class="nav-item">
+    <!-- <li class="nav-item">
         <a href="/upt">
             <i class="fas fa-th-list"></i>
             <p>Data UPT</p>
@@ -110,7 +110,7 @@
             <i class="fas fa-th-list"></i>
             <p>Jadwal Satpam</p>
         </a>
-    </li>
+    </li> -->
     <li class="nav-item">
         <a href="/riwayat">
             <i class="fas fa-th-list"></i>
@@ -124,12 +124,12 @@
         </a>
     </li>
 
-    <li class="nav-item {{ \Route::is('tabel') ? 'active' : '' }}">
+    <!-- <li class="nav-item {{ \Route::is('tabel') ? 'active' : '' }}">
         <a href="/tabel">
             <i class="fas fa-th-list"></i>
             <p>Tabel</p>
         </a>
-    </li>
+    </li> -->
 @endif
 
 </ul>

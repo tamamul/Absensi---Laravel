@@ -24,10 +24,12 @@
       <div class="card">
         <div class="card-header">
           <!-- <h4 class="card-title">Basic</h4> -->
+          @if(Auth::check() && Auth::user()->role == 'Admin')
           <a href="{{route('datasatpam.create')}}" class="btn btn-success" >
             <div class="fa fa-plus-circle"></div>
         <span class="d-none d-lg-block" style="float: right;  margin-left:3px;"> Tambah Data</span>
         </a>
+          @endif
         </div>
         <div class="card-body">
           <div class="table-responsive">
