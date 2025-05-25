@@ -1,453 +1,374 @@
--- phpMyAdmin SQL Dump
--- version 5.2.0
--- https://www.phpmyadmin.net/
---
--- Host: 127.0.0.1
--- Generation Time: May 20, 2025 at 04:28 PM
--- Server version: 8.0.30
--- PHP Version: 8.2.0
+/*
+SQLyog Enterprise
+MySQL - 8.0.30 : Database - si_absensi
+*********************************************************************
+*/
 
-SET SQL_MODE = "NO_AUTO_VALUE_ON_ZERO";
-START TRANSACTION;
-SET time_zone = "+00:00";
+/*!40101 SET NAMES utf8 */;
 
+/*!40101 SET SQL_MODE=''*/;
 
-/*!40101 SET @OLD_CHARACTER_SET_CLIENT=@@CHARACTER_SET_CLIENT */;
-/*!40101 SET @OLD_CHARACTER_SET_RESULTS=@@CHARACTER_SET_RESULTS */;
-/*!40101 SET @OLD_COLLATION_CONNECTION=@@COLLATION_CONNECTION */;
-/*!40101 SET NAMES utf8mb4 */;
+/*!40014 SET @OLD_UNIQUE_CHECKS=@@UNIQUE_CHECKS, UNIQUE_CHECKS=0 */;
+/*!40014 SET @OLD_FOREIGN_KEY_CHECKS=@@FOREIGN_KEY_CHECKS, FOREIGN_KEY_CHECKS=0 */;
+/*!40101 SET @OLD_SQL_MODE=@@SQL_MODE, SQL_MODE='NO_AUTO_VALUE_ON_ZERO' */;
+/*!40111 SET @OLD_SQL_NOTES=@@SQL_NOTES, SQL_NOTES=0 */;
+CREATE DATABASE /*!32312 IF NOT EXISTS*/`si_absensi` /*!40100 DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci */ /*!80016 DEFAULT ENCRYPTION='N' */;
 
---
--- Database: `si_absensi`
---
+USE `si_absensi`;
 
--- --------------------------------------------------------
+/*Table structure for table `absensi` */
 
---
--- Table structure for table `cache`
---
+DROP TABLE IF EXISTS `absensi`;
+
+CREATE TABLE `absensi` (
+  `id` int NOT NULL AUTO_INCREMENT,
+  `satpam_id` bigint unsigned NOT NULL,
+  `tanggal` date NOT NULL,
+  `jam_masuk` time DEFAULT NULL,
+  `jam_keluar` time DEFAULT '00:00:00',
+  `latitude_masuk` decimal(10,6) DEFAULT NULL,
+  `longitude_masuk` decimal(10,6) DEFAULT NULL,
+  `latitude_keluar` decimal(10,6) DEFAULT NULL,
+  `longitude_keluar` decimal(10,6) DEFAULT NULL,
+  `status` enum('hadir','terlambat','izin','sakit','alpha') DEFAULT 'hadir',
+  `keterangan` text,
+  `created_at` timestamp NULL DEFAULT CURRENT_TIMESTAMP,
+  `updated_at` timestamp NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+  PRIMARY KEY (`id`),
+  KEY `satpam_id` (`satpam_id`),
+  CONSTRAINT `absensi_ibfk_1` FOREIGN KEY (`satpam_id`) REFERENCES `datasatpam` (`id`) ON DELETE CASCADE
+) ENGINE=InnoDB AUTO_INCREMENT=5 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+
+/*Data for the table `absensi` */
+
+insert  into `absensi`(`id`,`satpam_id`,`tanggal`,`jam_masuk`,`jam_keluar`,`latitude_masuk`,`longitude_masuk`,`latitude_keluar`,`longitude_keluar`,`status`,`keterangan`,`created_at`,`updated_at`) values 
+(3,1,'2025-03-31','17:55:46','00:00:00',-7.744701,112.177540,NULL,NULL,'terlambat','','2025-03-31 17:55:46','2025-03-31 17:55:46');
+
+/*Table structure for table `cache` */
+
+DROP TABLE IF EXISTS `cache`;
 
 CREATE TABLE `cache` (
-  `key` varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL,
-  `value` mediumtext COLLATE utf8mb4_unicode_ci NOT NULL,
-  `expiration` int NOT NULL
+  `key` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL,
+  `value` mediumtext CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL,
+  `expiration` int NOT NULL,
+  PRIMARY KEY (`key`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
--- --------------------------------------------------------
+/*Data for the table `cache` */
 
---
--- Table structure for table `cache_locks`
---
+/*Table structure for table `cache_locks` */
+
+DROP TABLE IF EXISTS `cache_locks`;
 
 CREATE TABLE `cache_locks` (
-  `key` varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL,
-  `owner` varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL,
-  `expiration` int NOT NULL
+  `key` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL,
+  `owner` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL,
+  `expiration` int NOT NULL,
+  PRIMARY KEY (`key`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
--- --------------------------------------------------------
+/*Data for the table `cache_locks` */
 
---
--- Table structure for table `datasatpam`
---
+/*Table structure for table `datasatpam` */
+
+DROP TABLE IF EXISTS `datasatpam`;
 
 CREATE TABLE `datasatpam` (
-  `id` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL,
-  `nip` varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL,
-  `nik` varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL,
-  `foto` varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL,
-  `nama` varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL,
-  `pekerjaan` enum('Satpam') COLLATE utf8mb4_unicode_ci NOT NULL DEFAULT 'Satpam',
-  `status` enum('PKWT','PKWTT') COLLATE utf8mb4_unicode_ci NOT NULL,
-  `no_pkwt_pkwtt` varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL,
-  `kontrak` varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL,
-  `terhitung_mulai_tugas` date NOT NULL,
-  `jabatan` enum('Komandan Regu','Anggota') COLLATE utf8mb4_unicode_ci NOT NULL,
-  `upt_id` varchar(20) COLLATE utf8mb4_unicode_ci NOT NULL,
-  `ultg_id` varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL,
-  `lokasikerja_id` varchar(20) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL,
-  `wilayah_kerja` varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL,
-  `jenis_kelamin` enum('Laki-laki','Perempuan') COLLATE utf8mb4_unicode_ci NOT NULL,
-  `tempat_lahir` varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL,
-  `tanggal_lahir` date NOT NULL,
-  `usia` int NOT NULL,
-  `warga negara` enum('WNI','WNA') COLLATE utf8mb4_unicode_ci NOT NULL,
-  `agama` varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL,
-  `no_hp` varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL,
-  `email` varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL,
-  `alamat` text COLLATE utf8mb4_unicode_ci NOT NULL,
-  `kelurahan` varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL,
-  `kecamatan` varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL,
-  `kabupaten` varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL,
-  `provinsi` varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL,
-  `negara` varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL,
-  `nama_ibu` varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL,
-  `no_kontak_darurat` varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL,
-  `nama_kontak_darurat` varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL,
-  `nama_ahli_waris` varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL,
-  `tempat_lahir_ahli_waris` varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL,
-  `tanggal_lahir_ahli_waris` date NOT NULL,
-  `hub_ahli_waris` varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL,
-  `status_nikah` enum('TK','K','K1','K2','K3','K4') COLLATE utf8mb4_unicode_ci NOT NULL,
-  `jumlah_anak` int NOT NULL,
-  `npwp` varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL,
-  `nama_bank` varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL,
-  `no_rek` varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL,
-  `nama_pemilik_rek` varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL,
-  `no_dplk` varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL,
-  `pend_terakhir` varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL,
-  `sertifikasi_satpam` enum('Gada Pratama','Gada Madya','Gada Utama') COLLATE utf8mb4_unicode_ci NOT NULL,
-  `no_reg_kta` varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL,
-  `no_kta` varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL,
-  `polda` varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL,
-  `polres` varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL,
-  `no_bpjs_kesehatan` varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL,
-  `no_bpjs_ketenagakerjaan` varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL,
-  `ukuran_baju` enum('S','M','L','XL','XXL') COLLATE utf8mb4_unicode_ci NOT NULL,
-  `ukuran_celana` int NOT NULL,
-  `ukuran sepatu` int NOT NULL,
-  `ukuran_topi` int NOT NULL,
+  `id` bigint unsigned NOT NULL AUTO_INCREMENT,
+  `kode_satpam` varchar(255) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `nip` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL,
+  `nik` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL,
+  `foto` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `nama` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL,
+  `pekerjaan` enum('Satpam') CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT 'Satpam',
+  `status` enum('PKWT','PKWTT') CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `no_pkwt_pkwtt` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `kontrak` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `terhitung_mulai_tugas` date DEFAULT NULL,
+  `jabatan` enum('Komandan Regu','Anggota') CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `lokasikerja_id` bigint unsigned DEFAULT NULL,
+  `wilayah_kerja` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `jenis_kelamin` enum('Laki-laki','Perempuan') CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `tempat_lahir` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `tanggal_lahir` date DEFAULT NULL,
+  `usia` int DEFAULT NULL,
+  `warga negara` enum('WNI','WNA') CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `agama` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `no_hp` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `email` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `alamat` text CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci,
+  `kelurahan` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `kecamatan` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `kabupaten` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `provinsi` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `negara` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `nama_ibu` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `no_kontak_darurat` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `nama_kontak_darurat` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `nama_ahli_waris` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `tempat_lahir_ahli_waris` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `tanggal_lahir_ahli_waris` date DEFAULT NULL,
+  `hub_ahli_waris` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `status_nikah` enum('TK','K','K1','K2','K3','K4') CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `jumlah_anak` int DEFAULT NULL,
+  `npwp` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `nama_bank` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `no_rek` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `nama_pemilik_rek` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `no_dplk` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `pend_terakhir` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `sertifikasi_satpam` enum('Gada Pratama','Gada Madya','Gada Utama') CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `no_reg_kta` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `no_kta` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `polda` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `polres` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `no_bpjs_kesehatan` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `no_bpjs_ketenagakerjaan` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `ukuran_baju` enum('S','M','L','XL','XXL') CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `ukuran_celana` int DEFAULT NULL,
+  `ukuran sepatu` int DEFAULT NULL,
+  `ukuran_topi` int DEFAULT NULL,
   `created_at` timestamp NULL DEFAULT NULL,
-  `updated_at` timestamp NULL DEFAULT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+  `updated_at` timestamp NULL DEFAULT NULL,
+  PRIMARY KEY (`id`),
+  UNIQUE KEY `datasatpam_nip_unique` (`nip`),
+  UNIQUE KEY `datasatpam_nik_unique` (`nik`),
+  UNIQUE KEY `datasatpam_no_pkwt_pkwtt_unique` (`no_pkwt_pkwtt`),
+  UNIQUE KEY `datasatpam_no_rek_unique` (`no_rek`),
+  UNIQUE KEY `datasatpam_no_dplk_unique` (`no_dplk`),
+  UNIQUE KEY `datasatpam_no_reg_kta_unique` (`no_reg_kta`),
+  UNIQUE KEY `datasatpam_no_kta_unique` (`no_kta`),
+  UNIQUE KEY `datasatpam_no_bpjs_kesehatan_unique` (`no_bpjs_kesehatan`),
+  UNIQUE KEY `datasatpam_no_bpjs_ketenagakerjaan_unique` (`no_bpjs_ketenagakerjaan`),
+  KEY `datasatpam_lokasikerja_id_foreign` (`lokasikerja_id`),
+  CONSTRAINT `datasatpam_lokasikerja_id_foreign` FOREIGN KEY (`lokasikerja_id`) REFERENCES `lokasikerja` (`id`) ON DELETE CASCADE
+) ENGINE=InnoDB AUTO_INCREMENT=3 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
--- --------------------------------------------------------
+/*Data for the table `datasatpam` */
 
---
--- Table structure for table `failed_jobs`
---
+insert  into `datasatpam`(`id`,`kode_satpam`,`nip`,`nik`,`foto`,`nama`,`pekerjaan`,`status`,`no_pkwt_pkwtt`,`kontrak`,`terhitung_mulai_tugas`,`jabatan`,`lokasikerja_id`,`wilayah_kerja`,`jenis_kelamin`,`tempat_lahir`,`tanggal_lahir`,`usia`,`warga negara`,`agama`,`no_hp`,`email`,`alamat`,`kelurahan`,`kecamatan`,`kabupaten`,`provinsi`,`negara`,`nama_ibu`,`no_kontak_darurat`,`nama_kontak_darurat`,`nama_ahli_waris`,`tempat_lahir_ahli_waris`,`tanggal_lahir_ahli_waris`,`hub_ahli_waris`,`status_nikah`,`jumlah_anak`,`npwp`,`nama_bank`,`no_rek`,`nama_pemilik_rek`,`no_dplk`,`pend_terakhir`,`sertifikasi_satpam`,`no_reg_kta`,`no_kta`,`polda`,`polres`,`no_bpjs_kesehatan`,`no_bpjs_ketenagakerjaan`,`ukuran_baju`,`ukuran_celana`,`ukuran sepatu`,`ukuran_topi`,`created_at`,`updated_at`) values 
+(1,'SAT0001','12345','12345','1743322483_1.jpg','MISBACHUL','Satpam','PKWTT','017/PKWTT-AMP/VII/2023','jatin','2025-03-28','Anggota',1,'Kota Malang','Laki-laki','Malang','2000-01-08',25,'WNI','Islam','082333546365','tes@gmail.com','JL. DIPONEGORO NO. 2, RT. 2/2','JUNREJO','JUNREJO','Kota Batu','JAWA TIMUR','Indonesia','Lasemii','081249213511','Sri Wijayanti','Sri Wijayanti','Malang','2000-01-05','Istri','K3',3,NULL,'Mandiri','1150006824272','EDY PURWITO','1002301298308','SMA','Gada Pratama','13.13.887.054','2861/KTASATPAM-GP/II/2024/Ditbinmas','Polda Jawa Timur','Kota Batu','8022429420','1134336385','M',30,40,55,'2025-03-30 11:07:02','2025-03-30 11:07:05'),
+(2,'SAT0002','54321','54321','1743322723_2.jpg','frankie steinlie','Satpam',NULL,NULL,NULL,NULL,'Anggota',2,NULL,NULL,NULL,NULL,NULL,NULL,NULL,'08883866931','frankie.steinlie@gmail.com','medann',NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL);
+
+/*Table structure for table `failed_jobs` */
+
+DROP TABLE IF EXISTS `failed_jobs`;
 
 CREATE TABLE `failed_jobs` (
-  `id` bigint UNSIGNED NOT NULL,
-  `uuid` varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL,
-  `connection` text COLLATE utf8mb4_unicode_ci NOT NULL,
-  `queue` text COLLATE utf8mb4_unicode_ci NOT NULL,
-  `payload` longtext COLLATE utf8mb4_unicode_ci NOT NULL,
-  `exception` longtext COLLATE utf8mb4_unicode_ci NOT NULL,
-  `failed_at` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP
+  `id` bigint unsigned NOT NULL AUTO_INCREMENT,
+  `uuid` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL,
+  `connection` text CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL,
+  `queue` text CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL,
+  `payload` longtext CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL,
+  `exception` longtext CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL,
+  `failed_at` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  PRIMARY KEY (`id`),
+  UNIQUE KEY `failed_jobs_uuid_unique` (`uuid`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
--- --------------------------------------------------------
+/*Data for the table `failed_jobs` */
 
---
--- Table structure for table `jobs`
---
+/*Table structure for table `jadwal` */
 
-CREATE TABLE `jobs` (
-  `id` bigint UNSIGNED NOT NULL,
-  `queue` varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL,
-  `payload` longtext COLLATE utf8mb4_unicode_ci NOT NULL,
-  `attempts` tinyint UNSIGNED NOT NULL,
-  `reserved_at` int UNSIGNED DEFAULT NULL,
-  `available_at` int UNSIGNED NOT NULL,
-  `created_at` int UNSIGNED NOT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+DROP TABLE IF EXISTS `jadwal`;
 
--- --------------------------------------------------------
+CREATE TABLE `jadwal` (
+  `id` int NOT NULL AUTO_INCREMENT,
+  `satpam_id` bigint unsigned NOT NULL,
+  `tanggal` date NOT NULL,
+  `shift` enum('P','S','M','L') NOT NULL,
+  `keterangan` varchar(255) DEFAULT NULL,
+  `created_at` timestamp NULL DEFAULT CURRENT_TIMESTAMP,
+  `updated_at` timestamp NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+  PRIMARY KEY (`id`),
+  KEY `satpam_id` (`satpam_id`),
+  CONSTRAINT `jadwal_ibfk_1` FOREIGN KEY (`satpam_id`) REFERENCES `datasatpam` (`id`) ON DELETE CASCADE
+) ENGINE=InnoDB AUTO_INCREMENT=2 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 
---
--- Table structure for table `job_batches`
---
+/*Data for the table `jadwal` */
+
+insert  into `jadwal`(`id`,`satpam_id`,`tanggal`,`shift`,`keterangan`,`created_at`,`updated_at`) values 
+(1,1,'2025-03-31','S',NULL,'2025-03-30 14:33:57','2025-03-31 17:16:16');
+
+/*Table structure for table `job_batches` */
+
+DROP TABLE IF EXISTS `job_batches`;
 
 CREATE TABLE `job_batches` (
-  `id` varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL,
-  `name` varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL,
+  `id` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL,
+  `name` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL,
   `total_jobs` int NOT NULL,
   `pending_jobs` int NOT NULL,
   `failed_jobs` int NOT NULL,
-  `failed_job_ids` longtext COLLATE utf8mb4_unicode_ci NOT NULL,
-  `options` mediumtext COLLATE utf8mb4_unicode_ci,
+  `failed_job_ids` longtext CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL,
+  `options` mediumtext CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci,
   `cancelled_at` int DEFAULT NULL,
   `created_at` int NOT NULL,
-  `finished_at` int DEFAULT NULL
+  `finished_at` int DEFAULT NULL,
+  PRIMARY KEY (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
--- --------------------------------------------------------
+/*Data for the table `job_batches` */
 
---
--- Table structure for table `lokasikerja`
---
+/*Table structure for table `jobs` */
+
+DROP TABLE IF EXISTS `jobs`;
+
+CREATE TABLE `jobs` (
+  `id` bigint unsigned NOT NULL AUTO_INCREMENT,
+  `queue` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL,
+  `payload` longtext CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL,
+  `attempts` tinyint unsigned NOT NULL,
+  `reserved_at` int unsigned DEFAULT NULL,
+  `available_at` int unsigned NOT NULL,
+  `created_at` int unsigned NOT NULL,
+  PRIMARY KEY (`id`),
+  KEY `jobs_queue_index` (`queue`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+/*Data for the table `jobs` */
+
+/*Table structure for table `lokasikerja` */
+
+DROP TABLE IF EXISTS `lokasikerja`;
 
 CREATE TABLE `lokasikerja` (
-  `id` varchar(20) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL,
-  `upt_id` varchar(20) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL,
-  `ultg_id` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL,
+  `id` bigint unsigned NOT NULL AUTO_INCREMENT,
+  `kode_loker` varchar(255) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
   `nama_lokasikerja` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL,
-  `latitude` decimal(8,2) NOT NULL,
-  `longitude` decimal(8,2) NOT NULL,
+  `ultg_id` bigint unsigned NOT NULL,
+  `latitude` decimal(10,6) NOT NULL,
+  `longitude` decimal(10,6) NOT NULL,
   `radius` int NOT NULL COMMENT 'Radius dalam meter',
   `created_at` timestamp NULL DEFAULT NULL,
-  `updated_at` timestamp NULL DEFAULT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+  `updated_at` timestamp NULL DEFAULT NULL,
+  PRIMARY KEY (`id`),
+  KEY `lokasikerja_ultg_id_foreign` (`ultg_id`),
+  CONSTRAINT `lokasikerja_ultg_id_foreign` FOREIGN KEY (`ultg_id`) REFERENCES `ultg` (`id`) ON DELETE CASCADE
+) ENGINE=InnoDB AUTO_INCREMENT=3 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
---
--- Dumping data for table `lokasikerja`
---
+/*Data for the table `lokasikerja` */
 
-INSERT INTO `lokasikerja` (`id`, `upt_id`, `ultg_id`, `nama_lokasikerja`, `latitude`, `longitude`, `radius`, `created_at`, `updated_at`) VALUES
-('LOK1443', 'UPT0600', 'ULTG7184', 'GI 150KV Sumenep', '111.55', '-7.01', 100, '2025-05-04 08:07:30', '2025-05-04 08:07:30'),
-('LOK4663', 'UPT9335', 'ULTG9040', 'gok,', '111.55', '-7.10', 100, '2025-05-12 06:06:04', '2025-05-12 06:06:04'),
-('LOK6284', 'UPT6055', 'ULTG4836', 'GI 150KV Manisrejo', '113.83', '-7.01', 100, '2025-04-28 09:03:01', '2025-04-28 09:03:01');
+insert  into `lokasikerja`(`id`,`kode_loker`,`nama_lokasikerja`,`ultg_id`,`latitude`,`longitude`,`radius`,`created_at`,`updated_at`) values 
+(1,'LOK0001','GI 150KV LAWANG',1,-7.744757,112.177116,100,'2025-03-30 10:41:39','2025-03-30 10:41:43'),
+(2,'LOK0002','GI GULUK-GULUK',2,-7.744757,112.177116,100,'2025-03-30 10:42:29','2025-03-30 10:42:32');
 
--- --------------------------------------------------------
+/*Table structure for table `migrations` */
 
---
--- Table structure for table `migrations`
---
+DROP TABLE IF EXISTS `migrations`;
 
 CREATE TABLE `migrations` (
-  `id` int UNSIGNED NOT NULL,
-  `migration` varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL,
-  `batch` int NOT NULL
+  `id` int unsigned NOT NULL AUTO_INCREMENT,
+  `migration` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL,
+  `batch` int NOT NULL,
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB AUTO_INCREMENT=9 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+/*Data for the table `migrations` */
+
+insert  into `migrations`(`id`,`migration`,`batch`) values 
+(1,'0001_01_01_000000_create_users_table',1),
+(2,'0001_01_01_000001_create_cache_table',1),
+(3,'0001_01_01_000002_create_jobs_table',1),
+(4,'2025_03_16_114842_buat_tabel_upt',1),
+(5,'2025_03_16_115757_buat_tabel_ultg',2),
+(6,'2025_03_16_115923_buat_tabel_lokasikerja',3),
+(7,'2025_03_18_150541_buat_tabel_dtsatpam',4),
+(8,'2025_03_25_151931_remove_latitude_longitude_radius_from_datasatpam',5);
+
+/*Table structure for table `password_reset_tokens` */
+
+DROP TABLE IF EXISTS `password_reset_tokens`;
+
+CREATE TABLE `password_reset_tokens` (
+  `email` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL,
+  `token` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL,
+  `created_at` timestamp NULL DEFAULT NULL,
+  PRIMARY KEY (`email`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
---
--- Dumping data for table `migrations`
---
+/*Data for the table `password_reset_tokens` */
 
-INSERT INTO `migrations` (`id`, `migration`, `batch`) VALUES
-(1, '0001_01_01_000000_create_users_table', 1),
-(2, '0001_01_01_000001_create_cache_table', 1),
-(3, '0001_01_01_000002_create_jobs_table', 1),
-(4, '2025_03_16_114842_buat_tabel_upt', 1),
-(5, '2025_03_16_115757_buat_tabel_ultg', 1),
-(6, '2025_03_16_115923_buat_tabel_lokasikerja', 1),
-(7, '2025_03_18_150541_buat_tabel_dtsatpam', 1),
-(8, '2025_03_25_151931_remove_latitude_longitude_radius_from_datasatpam', 1),
-(9, '2025_04_24_153605_ubah_tabel_upt', 1),
-(10, '2025_04_25_130803_ubah_tabel_ultg', 1),
-(11, '2025_05_05_010530_create_users_table', 2);
+/*Table structure for table `sessions` */
 
--- --------------------------------------------------------
-
---
--- Table structure for table `sessions`
---
+DROP TABLE IF EXISTS `sessions`;
 
 CREATE TABLE `sessions` (
-  `id` varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL,
-  `user_id` bigint UNSIGNED DEFAULT NULL,
-  `ip_address` varchar(45) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
-  `user_agent` text COLLATE utf8mb4_unicode_ci,
-  `payload` longtext COLLATE utf8mb4_unicode_ci NOT NULL,
-  `last_activity` int NOT NULL
+  `id` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL,
+  `user_id` bigint unsigned DEFAULT NULL,
+  `ip_address` varchar(45) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `user_agent` text CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci,
+  `payload` longtext CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL,
+  `last_activity` int NOT NULL,
+  PRIMARY KEY (`id`),
+  KEY `sessions_user_id_index` (`user_id`),
+  KEY `sessions_last_activity_index` (`last_activity`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
--- --------------------------------------------------------
+/*Data for the table `sessions` */
 
---
--- Table structure for table `ultg`
---
+/*Table structure for table `ultg` */
+
+DROP TABLE IF EXISTS `ultg`;
 
 CREATE TABLE `ultg` (
-  `id` varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL,
-  `upt_id` varchar(20) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL,
-  `nama_ultg` varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL,
+  `id` bigint unsigned NOT NULL AUTO_INCREMENT,
+  `kode_ultg` varchar(255) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `nama_ultg` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL,
+  `upt_id` bigint unsigned NOT NULL,
   `created_at` timestamp NULL DEFAULT NULL,
-  `updated_at` timestamp NULL DEFAULT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+  `updated_at` timestamp NULL DEFAULT NULL,
+  PRIMARY KEY (`id`),
+  KEY `ultg_upt_id_foreign` (`upt_id`),
+  CONSTRAINT `ultg_upt_id_foreign` FOREIGN KEY (`upt_id`) REFERENCES `upt` (`id`) ON DELETE CASCADE
+) ENGINE=InnoDB AUTO_INCREMENT=3 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
---
--- Dumping data for table `ultg`
---
+/*Data for the table `ultg` */
 
-INSERT INTO `ultg` (`id`, `upt_id`, `nama_ultg`, `created_at`, `updated_at`) VALUES
-('ULTG4836', 'UPT6055', 'ULTG Madiun', '2025-04-28 09:02:40', '2025-05-04 08:07:02'),
-('ULTG7184', 'UPT0600', 'ULTG Sampang', '2025-04-28 07:35:28', '2025-04-28 07:35:28'),
-('ULTG9040', 'UPT9335', 'ULTG Malang', '2025-04-30 06:35:28', '2025-04-30 06:35:28');
+insert  into `ultg`(`id`,`kode_ultg`,`nama_ultg`,`upt_id`,`created_at`,`updated_at`) values 
+(1,'ULTG0001','malang',1,'2025-03-30 10:38:52','2025-03-30 10:38:55'),
+(2,'ULTG0002','sampang',2,'2025-03-30 10:39:03','2025-03-30 10:39:06');
 
--- --------------------------------------------------------
+/*Table structure for table `upt` */
 
---
--- Table structure for table `upt`
---
+DROP TABLE IF EXISTS `upt`;
 
 CREATE TABLE `upt` (
-  `id` varchar(20) COLLATE utf8mb4_unicode_ci NOT NULL,
-  `nama_upt` varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL,
+  `id` bigint unsigned NOT NULL AUTO_INCREMENT,
+  `kode_upt` varchar(255) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `nama_upt` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL,
   `created_at` timestamp NULL DEFAULT NULL,
-  `updated_at` timestamp NULL DEFAULT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+  `updated_at` timestamp NULL DEFAULT NULL,
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB AUTO_INCREMENT=3 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
---
--- Dumping data for table `upt`
---
+/*Data for the table `upt` */
 
-INSERT INTO `upt` (`id`, `nama_upt`, `created_at`, `updated_at`) VALUES
-('UPT0600', 'UPT Gresik', '2025-04-28 07:35:20', '2025-04-28 07:35:20'),
-('UPT6055', 'UPT Madiun', '2025-04-28 07:35:08', '2025-04-28 07:35:08'),
-('UPT9335', 'UPT Malang', '2025-04-28 07:35:16', '2025-04-28 07:35:16');
+insert  into `upt`(`id`,`kode_upt`,`nama_upt`,`created_at`,`updated_at`) values 
+(1,'UPT0001','malang','2025-03-30 10:38:29','2025-03-30 10:38:35'),
+(2,'UPT0002','gresik','2025-03-30 10:38:32','2025-03-30 10:38:38');
 
--- --------------------------------------------------------
+/*Table structure for table `users` */
 
---
--- Table structure for table `users`
---
+DROP TABLE IF EXISTS `users`;
 
 CREATE TABLE `users` (
-  `id` bigint UNSIGNED NOT NULL,
-  `username` varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL,
-  `password` varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL,
-  `role` varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL,
+  `id` bigint unsigned NOT NULL,
+  `username` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL,
+  `password` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL,
+  `role` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL,
   `created_at` timestamp NULL DEFAULT NULL,
   `updated_at` timestamp NULL DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
---
--- Dumping data for table `users`
---
+/*Data for the table `users` */
 
-INSERT INTO `users` (`id`, `username`, `password`, `role`, `created_at`, `updated_at`) VALUES
-(1, 'admin', '$2y$12$QkRMXuNYSFbHgB89GhqKJ.D2Uzs9DL.TNaxJQvVHp43GD3oDgi4UG', 'Admin', '2025-05-04 18:07:24', '2025-05-04 18:07:24'),
-(2, 'pimpinan', '$2y$12$DN/3aKAcperzdQGCvLmPseKSNCcrx8uOnrgCt49U5zZB8j/Ok1f3e', 'Pimpinan', '2025-05-04 18:07:25', '2025-05-04 18:07:25');
+insert  into `users`(`id`,`username`,`password`,`role`,`created_at`,`updated_at`) values 
+(1,'admin','$2y$12$QkRMXuNYSFbHgB89GhqKJ.D2Uzs9DL.TNaxJQvVHp43GD3oDgi4UG','Admin','2025-05-04 18:07:24','2025-05-04 18:07:24'),
+(2,'pimpinan','$2y$12$DN/3aKAcperzdQGCvLmPseKSNCcrx8uOnrgCt49U5zZB8j/Ok1f3e','Pimpinan','2025-05-04 18:07:25','2025-05-04 18:07:25');
 
---
--- Indexes for dumped tables
---
-
---
--- Indexes for table `cache`
---
-ALTER TABLE `cache`
-  ADD PRIMARY KEY (`key`);
-
---
--- Indexes for table `cache_locks`
---
-ALTER TABLE `cache_locks`
-  ADD PRIMARY KEY (`key`);
-
---
--- Indexes for table `datasatpam`
---
-ALTER TABLE `datasatpam`
-  ADD PRIMARY KEY (`id`),
-  ADD UNIQUE KEY `datasatpam_nip_unique` (`nip`),
-  ADD UNIQUE KEY `datasatpam_nik_unique` (`nik`),
-  ADD UNIQUE KEY `datasatpam_no_pkwt_pkwtt_unique` (`no_pkwt_pkwtt`),
-  ADD UNIQUE KEY `datasatpam_no_rek_unique` (`no_rek`),
-  ADD UNIQUE KEY `datasatpam_no_dplk_unique` (`no_dplk`),
-  ADD UNIQUE KEY `datasatpam_no_reg_kta_unique` (`no_reg_kta`),
-  ADD UNIQUE KEY `datasatpam_no_kta_unique` (`no_kta`),
-  ADD UNIQUE KEY `datasatpam_no_bpjs_kesehatan_unique` (`no_bpjs_kesehatan`),
-  ADD UNIQUE KEY `datasatpam_no_bpjs_ketenagakerjaan_unique` (`no_bpjs_ketenagakerjaan`),
-  ADD UNIQUE KEY `lokasikerja_id` (`lokasikerja_id`),
-  ADD KEY `datasatpam_upt_id_foreign` (`upt_id`),
-  ADD KEY `datasatpam_ultg_id_foreign` (`ultg_id`);
-
---
--- Indexes for table `failed_jobs`
---
-ALTER TABLE `failed_jobs`
-  ADD PRIMARY KEY (`id`),
-  ADD UNIQUE KEY `failed_jobs_uuid_unique` (`uuid`);
-
---
--- Indexes for table `jobs`
---
-ALTER TABLE `jobs`
-  ADD PRIMARY KEY (`id`),
-  ADD KEY `jobs_queue_index` (`queue`);
-
---
--- Indexes for table `job_batches`
---
-ALTER TABLE `job_batches`
-  ADD PRIMARY KEY (`id`);
-
---
--- Indexes for table `lokasikerja`
---
-ALTER TABLE `lokasikerja`
-  ADD PRIMARY KEY (`id`),
-  ADD UNIQUE KEY `upt_id` (`upt_id`),
-  ADD KEY `lokasikerja_ultg_id_foreign` (`ultg_id`);
-
---
--- Indexes for table `migrations`
---
-ALTER TABLE `migrations`
-  ADD PRIMARY KEY (`id`);
-
---
--- Indexes for table `sessions`
---
-ALTER TABLE `sessions`
-  ADD PRIMARY KEY (`id`),
-  ADD KEY `sessions_user_id_index` (`user_id`),
-  ADD KEY `sessions_last_activity_index` (`last_activity`);
-
---
--- Indexes for table `ultg`
---
-ALTER TABLE `ultg`
-  ADD PRIMARY KEY (`id`),
-  ADD KEY `ultg_upt_id_foreign` (`upt_id`);
-
---
--- Indexes for table `upt`
---
-ALTER TABLE `upt`
-  ADD PRIMARY KEY (`id`);
-
---
--- Indexes for table `users`
---
-ALTER TABLE `users`
-  ADD PRIMARY KEY (`id`),
-  ADD UNIQUE KEY `users_username_unique` (`username`);
-
---
--- AUTO_INCREMENT for dumped tables
---
-
---
--- AUTO_INCREMENT for table `failed_jobs`
---
-ALTER TABLE `failed_jobs`
-  MODIFY `id` bigint UNSIGNED NOT NULL AUTO_INCREMENT;
-
---
--- AUTO_INCREMENT for table `jobs`
---
-ALTER TABLE `jobs`
-  MODIFY `id` bigint UNSIGNED NOT NULL AUTO_INCREMENT;
-
---
--- AUTO_INCREMENT for table `migrations`
---
-ALTER TABLE `migrations`
-  MODIFY `id` int UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=12;
-
---
--- AUTO_INCREMENT for table `users`
---
-ALTER TABLE `users`
-  MODIFY `id` bigint UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=3;
-
---
--- Constraints for dumped tables
---
-
---
--- Constraints for table `datasatpam`
---
-ALTER TABLE `datasatpam`
-  ADD CONSTRAINT `datasatpam_upt_id_foreign` FOREIGN KEY (`upt_id`) REFERENCES `upt` (`id`) ON DELETE CASCADE;
-
---
--- Constraints for table `lokasikerja`
---
-ALTER TABLE `lokasikerja`
-  ADD CONSTRAINT `lokasikerja_ultg_id_foreign` FOREIGN KEY (`ultg_id`) REFERENCES `ultg` (`id`) ON DELETE CASCADE;
-
---
--- Constraints for table `ultg`
---
-ALTER TABLE `ultg`
-  ADD CONSTRAINT `ultg_upt_id_foreign` FOREIGN KEY (`upt_id`) REFERENCES `upt` (`id`) ON DELETE CASCADE;
-COMMIT;
-
-/*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;
-/*!40101 SET CHARACTER_SET_RESULTS=@OLD_CHARACTER_SET_RESULTS */;
-/*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
+/*!40101 SET SQL_MODE=@OLD_SQL_MODE */;
+/*!40014 SET FOREIGN_KEY_CHECKS=@OLD_FOREIGN_KEY_CHECKS */;
+/*!40014 SET UNIQUE_CHECKS=@OLD_UNIQUE_CHECKS */;
+/*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
