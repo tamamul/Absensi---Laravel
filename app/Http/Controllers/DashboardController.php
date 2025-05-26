@@ -25,7 +25,12 @@ class DashboardController extends Controller
 
     public function pimpinan()
     {
-        return view('pimpinan.dashboard');
+        $totalSatpam = Datasatpam::count();
+        $totalUpt = Upt::count();
+        $totalUltg = Ultg::count();
+        $totalLoker = Lokasikerja::count();
+
+        return view('pimpinan.dashboard', compact('totalSatpam', 'totalUpt', 'totalUltg', 'totalLoker'));
     }
 
     public function index()

@@ -66,7 +66,7 @@
                 <!-- Hanya tampilkan menu jika role pengguna adalah Admin -->
                 @if (Auth::check() && Auth::user()->role == 'Pimpinan')
                     <li class="nav-item {{ \Route::is('dashboard') ? 'active' : '' }}">
-                        <a href="/admin/dashboard">
+                        <a href="/pimpinan/dashboard">
                             <i class="fas fa-home"></i>
                             <span>Dashboard</span>
                         </a>
