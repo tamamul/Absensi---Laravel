@@ -17,7 +17,7 @@ class Lokasikerja extends Model
 
     protected $fillable = [
         'id',
-        'upt_id',
+        'kode_loker',
         'ultg_id',
         'nama_lokasikerja',
         'latitude',

@@ -44,8 +44,8 @@ class LokasikerjaController extends Controller
         ]);
 
         $lokasikerja = new Lokasikerja();
-        $lokasikerja->id = $request->id;
-        $lokasikerja->upt_id = $request->upt_id;
+        $lokasikerja->kode_loker = $request->kode_loker;
+        // $lokasikerja->upt_id = $request->upt_id;
         $lokasikerja->ultg_id = $request->ultg_id;
         $lokasikerja->nama_lokasikerja = $request->nama_lokasikerja;
         $lokasikerja->latitude = $request->latitude;
