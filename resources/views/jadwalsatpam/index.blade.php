@@ -90,17 +90,18 @@
                                     <thead>
                                         <tr>
                                             <th>No</th>
-                                            <th>Id Jadwal</th>
                                             <th>Nama Satpam</th>
                                             <th>Nama Lokasi Kerja</th>
                                             <th>Aksi</th>
                                         </tr>
                                     </thead>
+                                    @php
+                                        $uniqueSatpams = $jadwalsatpams->unique('satpam_id');
+                                    @endphp
                                     <tbody>
-                                        @foreach ($jadwalsatpams as $no => $jadwal)
+                                        @foreach ($uniqueSatpams as $no => $jadwal)
                                             <tr>
                                                 <td>{{ $no + 1 }}</td>
-                                                <td>{{ $jadwal->id }}</td>
                                                 <td>{{ $jadwal->datasatpam->nama ?? '-' }}</td>
                                                 <td>
                                                     {{ $jadwal->datasatpam->lokasikerja->nama_lokasikerja ?? '-' }}<br />
@@ -112,11 +113,11 @@
                                                     </small>
                                                 </td>
                                                 <td>
-                                                    <a href="{{ route('jadwalsatpam.edit', $jadwal->id) }}"
+                                                    <a href="{{ route('jadwalsatpam.edit', $jadwal->satpam_id) }}"
                                                         class="btn btn-warning btn-sm">
                                                         <i class="fa fa-edit"></i> Edit
                                                     </a>
-                                                    <form action="{{ route('jadwalsatpam.destroy', $jadwal->id) }}"
+                                                    {{-- <form action="{{ route('jadwalsatpam.destroy', $jadwal->id) }}"
                                                         method="POST" style="display:inline-block;"
                                                         onsubmit="return confirm('Yakin ingin menghapus data ini?')">
                                                         @csrf
@@ -124,7 +125,7 @@
                                                         <button type="submit" class="btn btn-danger btn-sm">
                                                             <i class="fa fa-trash"></i> Delete
                                                         </button>
-                                                    </form>
+                                                    </form> --}}
                                                 </td>
                                             </tr>
                                         @endforeach

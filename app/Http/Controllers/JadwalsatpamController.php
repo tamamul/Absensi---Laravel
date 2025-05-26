@@ -128,27 +128,65 @@ class JadwalsatpamController extends Controller
         return redirect()->route('jadwalsatpam.create')->with('success', 'Jadwal berhasil disimpan.');
     }
 
-    public function edit($id)
+    public function edit(Request $request, $id)
     {
-        $jadwal = Jadwalsatpam::findOrFail($id);
-        $upts = Upt::all();
-        $ultgs = Ultg::all();
-        $lokasikerjas = Lokasikerja::all();
-        $satpamList = Datasatpam::all();
+        // Ambil data satpam berdasarkan id (bukan id jadwal, tapi id satpam)
+        $satpam = \App\Models\Datasatpam::with('lokasikerja.ultg.upt')->findOrFail($id);
 
-        return view('jadwalsatpam.edit', compact('jadwal', 'upts', 'ultgs', 'lokasikerjas', 'satpamList'));
+        // Ambil bulan & tahun dari request, default ke bulan & tahun sekarang
+        $selectedBulan = $request->input('bulan', date('n'));
+        $selectedTahun = $request->input('tahun', date('Y'));
+
+        // Ambil jadwal satpam untuk bulan & tahun yang dipilih
+        $jadwalRows = \App\Models\Jadwalsatpam::where('satpam_id', $satpam->id)
+            ->whereMonth('tanggal', $selectedBulan)
+            ->whereYear('tanggal', $selectedTahun)
+            ->get();
+
+        // Mapping: [tanggal] => shift
+        $jadwalData = [];
+        foreach ($jadwalRows as $jadwal) {
+            $jadwalData[date('Y-m-d', strtotime($jadwal->tanggal))] = $jadwal->shift;
+        }
+
+        return view('jadwalsatpam.edit', [
+            'satpam' => $satpam,
+            'selectedBulan' => $selectedBulan,
+            'selectedTahun' => $selectedTahun,
+            'jadwalData' => $jadwalData,
+        ]);
     }
 
     public function update(Request $request, $id)
     {
         $validated = $request->validate([
             'satpam_id' => 'required|exists:datasatpam,id',
-            'tanggal' => 'required|date',
-            'shift' => 'required|string|max:10',
+            'bulan' => 'required|integer|min:1|max:12',
+            'tahun' => 'required|integer|min:2020|max:2100',
+            'jadwal' => 'required|array',
         ]);
 
-        $jadwal = Jadwalsatpam::findOrFail($id);
-        $jadwal->update($validated);
+        foreach ($request->jadwal as $tanggal => $shift) {
+            $fullDate = sprintf('%04d-%02d-%02d', $request->tahun, $request->bulan, $tanggal);
+            if ($shift) {
+                Jadwalsatpam::updateOrCreate(
+                    [
+                        'satpam_id' => $request->satpam_id,
+                        'tanggal' => $fullDate,
+                    ],
+                    [
+                        'satpam_id' => $request->satpam_id,
+                        'tanggal' => $fullDate,
+                        'shift' => $shift,
+                    ]
+                );
+            } else {
+                // Jika shift kosong, hapus jadwal pada tanggal tsb (opsional)
+                Jadwalsatpam::where('satpam_id', $request->satpam_id)
+                    ->where('tanggal', $fullDate)
+                    ->delete();
+            }
+        }
 
         return redirect()->route('jadwalsatpam.index')->with('success', 'Jadwal berhasil diupdate.');
     }
