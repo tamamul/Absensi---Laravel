@@ -6,6 +6,8 @@ use Illuminate\Http\Request;
 use App\Models\Datasatpam;
 use App\Models\Lokasikerja;
 use App\Models\Jadwalsatpam;
+use App\Models\Upt;
+use App\Models\Ultg;
 
 class DashboardController extends Controller
 {
@@ -13,13 +15,19 @@ class DashboardController extends Controller
 
     public function admin()
     {
-        return view('admin.dashboard');
+        $totalSatpam = Datasatpam::count();
+        $totalUpt = Upt::count();
+        $totalUltg = Ultg::count();
+        $totalLoker = Lokasikerja::count();
+
+        return view('admin.dashboard', compact('totalSatpam', 'totalUpt', 'totalUltg', 'totalLoker'));
     }
 
     public function pimpinan()
     {
         return view('pimpinan.dashboard');
     }
+
     public function index()
     {
         $totalDatasatpam = Datasatpam::count();
