@@ -51,7 +51,7 @@
         </a>
     </li>
     <li class="nav-item">
-        <a href="/riwayat">
+        <a href="{{ route('riwayat.index') }}">
             <i class="fas fa-th-list"></i>
             <p>Riwayat Absensi Satpam</p>
         </a>

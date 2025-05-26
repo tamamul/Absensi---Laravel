@@ -112,7 +112,19 @@
                                                     </small>
                                                 </td>
                                                 <td>
-                                                    {{-- Aksi edit/delete --}}
+                                                    <a href="{{ route('jadwalsatpam.edit', $jadwal->id) }}"
+                                                        class="btn btn-warning btn-sm">
+                                                        <i class="fa fa-edit"></i> Edit
+                                                    </a>
+                                                    <form action="{{ route('jadwalsatpam.destroy', $jadwal->id) }}"
+                                                        method="POST" style="display:inline-block;"
+                                                        onsubmit="return confirm('Yakin ingin menghapus data ini?')">
+                                                        @csrf
+                                                        @method('DELETE')
+                                                        <button type="submit" class="btn btn-danger btn-sm">
+                                                            <i class="fa fa-trash"></i> Delete
+                                                        </button>
+                                                    </form>
                                                 </td>
                                             </tr>
                                         @endforeach

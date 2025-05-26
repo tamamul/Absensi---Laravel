@@ -128,6 +128,39 @@ class JadwalsatpamController extends Controller
         return redirect()->route('jadwalsatpam.create')->with('success', 'Jadwal berhasil disimpan.');
     }
 
+    public function edit($id)
+    {
+        $jadwal = Jadwalsatpam::findOrFail($id);
+        $upts = Upt::all();
+        $ultgs = Ultg::all();
+        $lokasikerjas = Lokasikerja::all();
+        $satpamList = Datasatpam::all();
+
+        return view('jadwalsatpam.edit', compact('jadwal', 'upts', 'ultgs', 'lokasikerjas', 'satpamList'));
+    }
+
+    public function update(Request $request, $id)
+    {
+        $validated = $request->validate([
+            'satpam_id' => 'required|exists:datasatpam,id',
+            'tanggal' => 'required|date',
+            'shift' => 'required|string|max:10',
+        ]);
+
+        $jadwal = Jadwalsatpam::findOrFail($id);
+        $jadwal->update($validated);
+
+        return redirect()->route('jadwalsatpam.index')->with('success', 'Jadwal berhasil diupdate.');
+    }
+
+    public function destroy($id)
+    {
+        $jadwal = Jadwalsatpam::findOrFail($id);
+        $jadwal->delete();
+
+        return redirect()->route('jadwalsatpam.index')->with('success', 'Jadwal berhasil dihapus.');
+    }
+
     // ULTG berdasarkan UPT
     public function getUltg($uptId)
     {

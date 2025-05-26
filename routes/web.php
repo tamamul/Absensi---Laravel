@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\AbsensiController;
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\DatasatpamController;
@@ -124,22 +125,31 @@ Route::get('lokasikerja/get-ultg/{upt_id}', [LokasikerjaController::class, 'getU
 Route::get('/jadwalsatpam', [JadwalsatpamController::class, 'index'])->name('jadwalsatpam.index');
 Route::get('/jadwalsatpam/create', [JadwalsatpamController::class, 'create'])->name('jadwalsatpam.create');
 Route::post('/jadwalsatpam', [JadwalsatpamController::class, 'store'])->name('jadwalsatpam.store');
+Route::get('/jadwalsatpam/{id}/edit', [JadwalsatpamController::class, 'edit'])->name('jadwalsatpam.edit');
+Route::put('/jadwalsatpam/{id}', [JadwalsatpamController::class, 'update'])->name('jadwalsatpam.update');
+Route::post('/jadwalsatpam/delete/{id}', [JadwalsatpamController::class, 'destroy'])->name('jadwalsatpam.destroy');
 Route::get('/get-ultg/{uptId}', [JadwalsatpamController::class, 'getUltg']);
 Route::get('/get-lokasi/{ultgId}', [JadwalsatpamController::class, 'getLokasiKerja']);
 Route::get('/get-satpam/{lokasikerja_id}', function($lokasikerja_id) {
     return \App\Models\Datasatpam::where('lokasikerja_id', $lokasikerja_id)->pluck('nama', 'id');
 });
 
+// Riwayat
+Route::get('/riwayat', [AbsensiController::class, 'index'])->name('riwayat.index');
+
 // Route AJAX untuk filter dinamis
 // Route::get('/get-ultg/{uptId}', [JadwalsatpamController::class, 'getUltg']);
 // Route::get('/get-lokasi-kerja/{ultgId}', [JadwalsatpamController::class, 'getLokasiKerja']);
 
 //Laporan
-Route::get('laporan', [LaporanController::class, 'index'])->name('laporan.index');
+Route::get('/laporan', [LaporanController::class, 'index'])->name('laporan.index');
+Route::get('/laporan/lokasi/{ultg_id}', [LaporanController::class, 'getLokasiKerja']);
+Route::get('/laporan/view', [LaporanController::class, 'view'])->name('laporan.view');
+Route::get('/laporan/export', [LaporanController::class, 'exportPDF'])->name('laporan.export');
 // Route::get('/get-ultg/{upt_id}', [LaporanController::class, 'getUltg']);
 // Route::get('/get-lokasi/{ultg_id}', [LaporanController::class, 'getLokasi']);
-Route::post('/view', [LaporanController::class, 'view'])->name('laporan.view');
-Route::post('/export-pdf', [LaporanController::class, 'exportPDF'])->name('laporan.export');
+// Route::post('/view', [LaporanController::class, 'view'])->name('laporan.view');
+// Route::post('/export-pdf', [LaporanController::class, 'exportPDF'])->name('laporan.export');
 
 
 // Route::get('lokasikerja', [LokasikerjaController::class, 'index']);
@@ -190,9 +200,9 @@ Route::post('/export-pdf', [LaporanController::class, 'exportPDF'])->name('lapor
 //     return view('tambahjadwalsatpam');
 // })->name('tambahjadwalsatpam');
 
-Route::get('/riwayat', function () {
-    return view('riwayat');
-})->name('riwayat');
+// Route::get('/riwayat', function () {
+//     return view('riwayat');
+// })->name('riwayat');
 
 Route::get('/form', function () {
     return view('form');
