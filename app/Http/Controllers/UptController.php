@@ -26,7 +26,7 @@ class UptController extends Controller
 
     
         $data = new Upt();
-        $data->id = $request->id;
+        $data->kode_upt = $request->kode_upt;
         $data->nama_upt = $request->nama_upt;
         $data->save();
         
