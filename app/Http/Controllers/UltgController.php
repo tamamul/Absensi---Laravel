@@ -37,7 +37,7 @@ class UltgController extends Controller
     }
 
         $data = new Ultg();
-        $data->id = $request->id;
+        $data->kode_ultg = $request->kode_ultg;
         $data->nama_ultg = $request->nama_ultg;
         $data->upt_id = $request->nama_upt;
         $data->save();
