@@ -30,10 +30,16 @@
                 <li class="nav-item dropdown hidden-caret">
                     <a class="nav-link" data-toggle="dropdown" href="#" aria-expanded="false">
                         <span class="profile-username">
-                            <span class="mr-3">Admin</span>
-                              {{-- <a href="#" class="text-dark">
-                                  <i class="fas fa-sign-out-alt"></i>
-                              </a> --}}
+                            @auth
+                                @if (Auth::user()->role == 'Admin')
+                                    <span class="mr-3">Admin</span>
+                                @elseif(Auth::user()->role == 'Pimpinan')
+                                    <span class="mr-3">Pimpinan</span>
+                                @else
+                                    <span class="mr-3">{{ Auth::user()->name }}</span>
+                                @endif
+                            @endauth
+                        </span>
                     </a>
                     <ul class="dropdown-menu dropdown-user animated fadeIn">
                         <div class="dropdown-user-scroll scrollbar-outer">
