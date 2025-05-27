@@ -20,7 +20,7 @@
                         </a>
                     </li>
                     <li class="nav-item">
-                        <a href="/tampil-datasatpam">
+                        <a href="/datasatpam">
                             <i class="fas fa-user-shield"></i>
                             <span>Data Satpam</span>
                         </a>
@@ -73,7 +73,7 @@
                     </li>
 
                     <li class="nav-item">
-                        <a href="/tampil-datasatpam">
+                        <a href="/datasatpam">
                             <i class="fas fa-user-shield"></i>
                             <span>Data Satpam</span>
                         </a>

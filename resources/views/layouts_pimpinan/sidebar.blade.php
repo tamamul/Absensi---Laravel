@@ -23,7 +23,7 @@
           <h4 class="text-section">Menu</h4>
         </li> -->
         <li class="nav-item">
-          <a href="/tampil-datasatpam">
+          <a href="/datasatpam">
             <i class="fas fa-th-list"></i>
             <p>Data Satpam</p>
           </a>

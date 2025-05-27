@@ -167,8 +167,8 @@
             $('#nama_lokasikerja').html('<option value="">Pilih Nama Lokasi Kerja</option>');
             if (ultgID) {
                 $.get('/get-lokasi/' + ultgID, function(data) {
-                    $.each(data, function(id, nama) {
-                        $('#nama_lokasikerja').append('<option value="' + id + '">' + nama +
+                    $.each(data, function(index, item) { // 'item' adalah objek lokasi kerja
+                        $('#nama_lokasikerja').append('<option value="' + item.id + '">' + item.nama_lokasikerja +
                             '</option>');
                     });
                 });
@@ -191,9 +191,9 @@
                     if (ultgID) {
                         // Isi lokasi kerja jika ultg sudah terpilih
                         $.get('/get-lokasi/' + ultgID, function(data) {
-                            $.each(data, function(id, nama) {
-                                var selected = (id == lokasiID) ? 'selected' : '';
-                                $('#nama_lokasikerja').append('<option value="' + id +
+                            $.each(data, function(index, item) { // 'item' adalah objek lokasi kerja
+                                var selected = (item.id == lokasiID) ? 'selected' : '';
+                                $('#nama_lokasikerja').append('<option value="' + item.id +
                                     '" ' + selected + '>' + nama + '</option>');
                             });
                         });

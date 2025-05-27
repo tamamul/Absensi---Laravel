@@ -12,9 +12,9 @@ use App\Http\Controllers\UptController;
 use Illuminate\Support\Facades\Route;
 use App\Http\Middleware\Rolemiddleware;
 
-// Route::get('/', function () {
-//     return view('welcome');
-// });
+Route::get('/', function () {
+    return view('welcome');
+});
 
 // Route::get('/login', [AuthController::class, 'showLoginForm'])->name('login');
 // Route::post('/login', [AuthController::class, 'login']);
@@ -76,13 +76,14 @@ Route::middleware('auth')->group(function () {
 // });
 
 //Data Satpam
-Route::get('tampil-datasatpam', [DatasatpamController::class, 'index']);
-Route::get('tambah-datasatpam', [DatasatpamController::class, 'create'])->name('datasatpam.create');
-Route::post('tampil-datasatpam', [DatasatpamController::class, 'store'])->name('datasatpam.store');
-Route::get('/datasatpam/edit/{id}', [DatasatpamController::class, 'edit'])->name('datasatpam.edit');
-Route::post('/datasatpam/edit/{id}', [DatasatpamController::class, 'update'])->name('datasatpam.update');
-Route::post('/datasatpam/delete/{id}', [DatasatpamController::class, 'destroy'])->name('datasatpam.delete');
+Route::get('/datasatpam', [DatasatpamController::class, 'index'])->name('datasatpam.index');
+Route::get('/datasatpam/create', [DatasatpamController::class, 'create'])->name('datasatpam.create');
+Route::post('/datasatpam', [DatasatpamController::class, 'store'])->name('datasatpam.store');
+Route::get('/datasatpam/{id}/edit', [DatasatpamController::class, 'edit'])->name('datasatpam.edit');
+Route::put('/datasatpam/{id}', [DatasatpamController::class, 'update'])->name('datasatpam.update');
+Route::delete('/datasatpam/{id}', [DatasatpamController::class, 'destroy'])->name('datasatpam.delete');
 
+// Route untuk dropdown cascade
 Route::get('/get-ultg/{upt_id}', [DatasatpamController::class, 'getUltg']);
 Route::get('/get-lokasi-kerja/{ultg_id}', [DatasatpamController::class, 'getLokasiKerja']);
 

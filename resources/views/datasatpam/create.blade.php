@@ -31,14 +31,15 @@
         <div class="card-header">
           <div class="card-title">Data Satpam</div>
         </div>
-        <form action="{{ route('datasatpam.store') }}" method="POST">
+        <form action="{{ route('datasatpam.store') }}" method="POST" enctype="multipart/form-data">
           @csrf 
         <div class="card-body">
-          <div class="row">
+          <div class="row"> 
           <div class="col-md-6 col-lg-4">
-          <div class="form-group">
-                    <label for="id">Id</label>
-                    <input type="text" class="form-control" id="id" name="id" value="{{ $newID }}" readonly>
+                <div class="form-group">
+                    <label for="kode_satpam">Kode Satpam</label>
+                    <input type="text" class="form-control @error('kode_satpam') is-invalid @enderror" id="kode_satpam" name="kode_satpam" value="{{ old('kode_satpam', $newID) }}" readonly>
+                    @error('kode_satpam')<div class="invalid-feedback">{{ $message }}</div>@enderror
                 </div>
                 <div class="form-group">
               <label for="nama">No Induk Pegawai</label>
@@ -63,8 +64,9 @@
                   @enderror
               </div>
         <div class="form-group">
-                <label for="foto">Foto</label>
-                <input type="file" class="form-control-file" id="exampleFormControlFile1">
+                <label for="foto">Foto (Max 2MB)</label>
+                <input type="file" class="form-control-file @error('foto') is-invalid @enderror" id="foto" name="foto">
+                @error('foto')<div class="invalid-feedback">{{ $message }}</div>@enderror
               </div>
               <div class="form-group">
               <label for="nama">Nama Lengkap</label>
@@ -79,16 +81,16 @@
               </div>
               <div class="form-group">
                 <label for="pekerjaan">Pekerjaan</label>
-                <input type="text" class="form-control" name="pekerjaan" id="pekerjaan" placeholder="Satpam" disabled>
+                <input type="text" class="form-control" name="pekerjaan" id="pekerjaan" value="Satpam" readonly>
               </div>
               <div class="form-check">
                 <label>Status</label><br/>
                 <label class="form-radio-label">
-                  <input class="form-radio-input" type="radio" name="status" value=""  checked="">
+                  <input class="form-radio-input" type="radio" name="status" value="PKWT" {{ old('status') == 'PKWT' ? 'checked' : '' }}>
                   <span class="form-radio-sign">PKWT</span>
                 </label>
                 <label class="form-radio-label ml-3">
-                  <input class="form-radio-input" type="radio" name="status" value="">
+                  <input class="form-radio-input" type="radio" name="status" value="PKWTT" {{ old('status') == 'PKWTT' ? 'checked' : '' }}>
                   <span class="form-radio-sign">PKWTT</span>
                 </label>
               </div>
@@ -115,12 +117,13 @@
                   @enderror
               </div>
               <div class="form-group">
-                <label for="tanggal_lahir">Terhitung Mulai Tugas</label>
-                <input type="date" id="tanggal_lahir" name="tanggal_lahir" class="form-control" required>
+                <label for="terhitung_mulai_tugas">Terhitung Mulai Tugas</label>
+                <input type="date" id="terhitung_mulai_tugas" name="terhitung_mulai_tugas" class="form-control @error('terhitung_mulai_tugas') is-invalid @enderror" value="{{ old('terhitung_mulai_tugas') }}" required>
+                @error('terhitung_mulai_tugas')<div class="invalid-feedback">{{ $message }}</div>@enderror
             </div>
               <div class="form-group">
-                <label for="exampleFormControlSelect1">Jabatan</label>
-                <select class="form-control" id="exampleFormControlSelect1">
+                <label for="jabatan">Jabatan</label>
+                <select class="form-control @error('jabatan') is-invalid @enderror" id="jabatan" name="jabatan">
                 <option value="" disabled selected>Pilih Jabatan</option>
                 <option value="Komandan Regu">Komandan Regu</option>
                 <option value="Anggota">Anggota</option>
@@ -151,12 +154,12 @@
     @enderror
 </div>
 <div class="form-group">
-    <label for="lokasikerja">Lokasi Kerja</label>
-    <select class="form-control @error('lokasikerja_id') is-invalid @enderror" id="lokasikerja" name="lokasikerja_id">
+    <label for="lokasikerja_id">Lokasi Kerja</label>
+    <select class="form-control @error('lokasikerja_id') is-invalid @enderror" id="lokasikerja_id" name="lokasikerja_id">
         <option value="" disabled selected>Pilih Lokasi Kerja</option>
         <!-- akan dinamis -->
     </select>
-    @error('lokasikerja_id')
+    @error('lokasikerja_id') 
     <div class="invalid-feedback">{{ $message }}</div>
     @enderror
 </div>
@@ -175,11 +178,11 @@
         <div class="form-check">
                 <label>Jenis Kelamin</label><br/>
                 <label class="form-radio-label">
-                  <input class="form-radio-input" type="radio" name="jenis_kelamin" value=""  checked="">
+                  <input class="form-radio-input" type="radio" name="jenis_kelamin" value="Laki-laki" {{ old('jenis_kelamin') == 'Laki-laki' ? 'checked' : '' }}>
                   <span class="form-radio-sign">Laki-Laki</span>
                 </label>
                 <label class="form-radio-label ml-3">
-                  <input class="form-radio-input" type="radio" name="jenis_kelamin" value="">
+                  <input class="form-radio-input" type="radio" name="jenis_kelamin" value="Perempuan" {{ old('jenis_kelamin') == 'Perempuan' ? 'checked' : '' }}>
                   <span class="form-radio-sign">Perempuan</span>
                 </label>
               </div>
@@ -195,8 +198,9 @@
                   @enderror
               </div> 
               <div class="form-group">
-                <label for="tanggal_lahir">Tanggal Lahir</label>
-                <input type="date" id="tanggal_lahir" name="tanggal_lahir" class="form-control" required>
+                <label for="tanggal_lahir_satpam">Tanggal Lahir</label>
+                <input type="date" id="tanggal_lahir_satpam" name="tanggal_lahir" class="form-control @error('tanggal_lahir') is-invalid @enderror" value="{{ old('tanggal_lahir') }}" required>
+                @error('tanggal_lahir')<div class="invalid-feedback">{{ $message }}</div>@enderror
             </div>
             <div class="form-group">
               <label for="nama">Usia</label>
@@ -212,19 +216,19 @@
               <div class="form-check">
                 <label>Warga Negara</label><br/>
                 <label class="form-radio-label">
-                  <input class="form-radio-input" type="radio" name="warga_negara" value=""  checked="">
+                  <input class="form-radio-input" type="radio" name="warga_negara" value="WNI" {{ old('warga_negara') == 'WNI' ? 'checked' : '' }}>
                   <span class="form-radio-sign">WNI</span>
                 </label>
                 <label class="form-radio-label ml-3">
-                  <input class="form-radio-input" type="radio" name="warga_negara" value="">
+                  <input class="form-radio-input" type="radio" name="warga_negara" value="WNA" {{ old('warga_negara') == 'WNA' ? 'checked' : '' }}>
                   <span class="form-radio-sign">WNA</span>
                 </label>
               </div>
           </div>
           <div class="col-md-6 col-lg-4">
           <div class="form-group">
-                <label for="agama">Agama</label>
-                <select class="form-control" id="agama">
+                <label for="agama_select">Agama</label>
+                <select class="form-control @error('agama') is-invalid @enderror" id="agama_select" name="agama">
                 <option value="" disabled selected>Pilih Agama</option>
                 <option value="Islam">Islam</option>
                 <option value="Kristen">Kristen</option>
@@ -249,8 +253,8 @@
                   @enderror
               </div> 
             <div class="form-group">
-                <label for="email2">Email</label>
-                <input type="email" class="form-control" id="email" placeholder="Masukkan Email">
+                <label for="email_input">Email</label>
+                <input type="email" class="form-control @error('email') is-invalid @enderror" id="email_input" name="email" placeholder="Masukkan Email" value="{{ old('email') }}">
                 @error('email')
                   <div class="invalid-feedback">{{ $message }}</div>
                   @enderror
@@ -258,7 +262,7 @@
           <div class="form-group">
                 <label for="comment">Alamat</label>
                 <textarea class="form-control" id="alamat" name="alamat" rows="5">
-                </textarea>
+                {{ old('alamat') }}</textarea>
                 @error('alamat')
                   <div class="invalid-feedback">{{ $message }}</div>
                   @enderror
@@ -374,8 +378,9 @@
                   @enderror
               </div> 
               <div class="form-group">
-                <label for="tanggal_lahir_ahli_waris">Tanggal Lahir Ahli Waris</label>
-                <input type="date" id="tanggal_lahir_ahli_waris" name="tanggal_lahir_ahli_waris" class="form-control" required>
+                <label for="tgl_lahir_ahli_waris">Tanggal Lahir Ahli Waris</label>
+                <input type="date" id="tgl_lahir_ahli_waris" name="tanggal_lahir_ahli_waris" class="form-control @error('tanggal_lahir_ahli_waris') is-invalid @enderror" value="{{ old('tanggal_lahir_ahli_waris') }}" required>
+                @error('tanggal_lahir_ahli_waris')<div class="invalid-feedback">{{ $message }}</div>@enderror
             </div>
             <div class="form-group">
               <label for="nama">Hubungan Ahli Waris</label>
@@ -389,8 +394,8 @@
                   @enderror
               </div> 
               <div class="form-group">
-                <label for="status_nikah">Status Nikah</label>
-                <select class="form-control" id="status_nikah">
+                <label for="status_nikah_select">Status Nikah</label>
+                <select class="form-control @error('status_nikah') is-invalid @enderror" id="status_nikah_select" name="status_nikah">
                 <option value="" disabled selected>Pilih Status Nikah</option>
                 <option value="TK">TK</option>
                 <option value="K">K</option>
@@ -483,8 +488,8 @@
                   @enderror
               </div>
               <div class="form-group">
-                <label for="ertifikasi_satpam">Sertifikasi Satpam</label>
-                <select class="form-control" id="sertifikasi_satpam">
+                <label for="sertifikasi_satpam_select">Sertifikasi Satpam</label>
+                <select class="form-control @error('sertifikasi_satpam') is-invalid @enderror" id="sertifikasi_satpam_select" name="sertifikasi_satpam">
                 <option value="" disabled selected>Pilih Sertifikasi</option>
                 <option value="Gada Pratama">Gada Pratama</option>
                 <option value="Gada Madya">Gada Madya</option>
@@ -564,23 +569,23 @@
                 <label class="form-label">Ukuran Baju</label>
                 <div class="selectgroup w-100">
                   <label class="selectgroup-item">
-                    <input type="radio" name="ukuran_baju" value="50" class="selectgroup-input" checked="">
+                    <input type="radio" name="ukuran_baju" value="S" class="selectgroup-input" {{ old('ukuran_baju') == 'S' ? 'checked' : '' }}>
                     <span class="selectgroup-button">S</span>
                   </label>
                   <label class="selectgroup-item">
-                    <input type="radio" name="ukuran_baju" value="100" class="selectgroup-input">
+                    <input type="radio" name="ukuran_baju" value="M" class="selectgroup-input" {{ old('ukuran_baju') == 'M' ? 'checked' : '' }}>
                     <span class="selectgroup-button">M</span>
                   </label>
                   <label class="selectgroup-item">
-                    <input type="radio" name="ukuran_baju" value="150" class="selectgroup-input">
+                    <input type="radio" name="ukuran_baju" value="L" class="selectgroup-input" {{ old('ukuran_baju') == 'L' ? 'checked' : '' }}>
                     <span class="selectgroup-button">L</span>
                   </label>
                   <label class="selectgroup-item">
-                    <input type="radio" name="ukuran_baju" value="200" class="selectgroup-input">
+                    <input type="radio" name="ukuran_baju" value="XL" class="selectgroup-input" {{ old('ukuran_baju') == 'XL' ? 'checked' : '' }}>
                     <span class="selectgroup-button">XL</span>
                   </label>
                   <label class="selectgroup-item">
-                    <input type="radio" name="ukuran_baju" value="200" class="selectgroup-input">
+                    <input type="radio" name="ukuran_baju" value="XXL" class="selectgroup-input" {{ old('ukuran_baju') == 'XXL' ? 'checked' : '' }}>
                     <span class="selectgroup-button">XXL</span>
                   </label>
                 </div>
@@ -590,7 +595,7 @@
                 </div>
                 <div class="form-group">
                   <label for="nama">Ukuran Celana</label>
-                  <input type="text" 
+                  <input type="number" 
                         class="form-control @error('ukuran_celana') is-invalid @enderror" 
                         id="ukuran_celana" name="ukuran_celana" 
                         placeholder="Masukkan Ukuran Celana"
@@ -601,7 +606,7 @@
               </div>
               <div class="form-group">
                   <label for="nama">Ukuran Sepatu</label>
-                  <input type="text" 
+                  <input type="number" 
                         class="form-control @error('ukuran_sepatu') is-invalid @enderror" 
                         id="ukuran_sepatu" name="ukuran_sepatu" 
                         placeholder="Masukkan Ukuran Sepatu"
@@ -612,7 +617,7 @@
               </div>
               <div class="form-group">
                   <label for="nama">Ukuran Topi</label>
-                  <input type="text" 
+                  <input type="number" 
                         class="form-control @error('ukuran_topi') is-invalid @enderror" 
                         id="ukuran_topi" name="ukuran_topi" 
                         placeholder="Masukkan Ukuran Topi"
@@ -623,9 +628,10 @@
               </div>
               </div>
               </div>
+              </div>
               <div class="card-action">
           <button type="submit" class="btn btn-success">Submit</button>
-          <a href="{{ url('tampil-datasatpam') }}" class="btn btn-danger">Cancel</a>        
+          <a href="{{ route('datasatpam.index') }}" class="btn btn-danger">Cancel</a>
         </div>
       </div>
     </form>
@@ -640,7 +646,7 @@
         var uptID = $(this).val();
         if (uptID) {
             $.ajax({
-                url: '/lokasikerja/get-ultg/' + uptID,
+                url: '/get-ultg/' + uptID, // Sesuaikan dengan route Anda
                 type: "GET",
                 dataType: "json",
                 success: function(data) {
@@ -648,7 +654,7 @@
                     $('#nama_ultg').append('<option value="" disabled selected>Pilih Nama ULTG</option>');
                     $.each(data, function(key, value) {
                         $('#nama_ultg').append('<option value="'+ value.id +'">'+ value.nama_ultg +'</option>');
-                    });
+                    }); // Seharusnya key adalah id, value adalah nama_ultg jika menggunakan pluck di controller
                 }
             });
         } else {
@@ -660,15 +666,15 @@
         var ultgID = $(this).val();
         if (ultgID) {
             $.ajax({
-                url: '/get-lokasi-kerja/' + ultgID,
+                url: '/get-lokasi/' + ultgID, // Sesuaikan dengan route Anda
                 type: "GET",
                 dataType: "json",
                 success: function(data) {
-                    $('#lokasikerja').empty();
-                    $('#lokasikerja').append('<option value="" disabled selected>Pilih Nama Lokasi Kerja</option>');
-                    $.each(data, function(key, value) {
-                        $('#lokasikerja').append('<option value="'+ value.id +'">'+ value.nama_lokasikerja +'</option>');
-                    });
+                    $('#lokasikerja_id').empty(); // Targetkan ID select yang benar
+                    $('#lokasikerja_id').append('<option value="" disabled selected>Pilih Nama Lokasi Kerja</option>');
+                    $.each(data, function(index, item) { // Jika controller mengembalikan array objek
+                        $('#lokasikerja_id').append('<option value="'+ item.id +'">'+ item.nama_lokasikerja +'</option>');
+                    }); 
                 }
             });
         } else {

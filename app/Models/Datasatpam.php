@@ -12,25 +12,24 @@ class Datasatpam extends Model
     protected $table = 'datasatpam';
 
     protected $fillable = [
-        'id',
+        'kode_satpam',
         'nip',
         'nik',
         'foto',
         'nama',
+        'pekerjaan',
         'status',
-        'no_kontrak',
+        'no_pkwt_pkwtt',
         'kontrak',
-        'tmt',
+        'terhitung_mulai_tugas',
         'jabatan',
-        'upt_id',
-        'ultg_id',
-        'lokasi_kerja_id',
+        'lokasikerja_id',
         'wilayah_kerja',
         'jenis_kelamin',
         'tempat_lahir',
         'tanggal_lahir',
         'usia',
-        'warga_negara',
+        'warga negara',
         'agama',
         'no_hp',
         'email',
@@ -41,48 +40,69 @@ class Datasatpam extends Model
         'provinsi',
         'negara',
         'nama_ibu',
-        'kontak_darurat',
+        'no_kontak_darurat',
         'nama_kontak_darurat',
-        'ahli_waris',
+        'nama_ahli_waris',
         'tempat_lahir_ahli_waris',
         'tanggal_lahir_ahli_waris',
-        'hubungan_ahli_waris',
+        'hub_ahli_waris',
         'status_nikah',
         'jumlah_anak',
         'npwp',
         'nama_bank',
-        'no_rekening',
-        'nama_pemilik_rekening',
+        'no_rek',
+        'nama_pemilik_rek',
         'no_dplk',
-        'pendidikan_terakhir',
-        'sertifikasi',
+        'pend_terakhir',
+        'sertifikasi_satpam',
         'no_reg_kta',
         'no_kta',
         'polda',
         'polres',
-        'bpjs_kesehatan',
-        'bpjs_ketenagakerjaan',
+        'no_bpjs_kesehatan',
+        'no_bpjs_ketenagakerjaan',
         'ukuran_baju',
         'ukuran_celana',
-        'ukuran_sepatu',
-        'ukuran_topi',
+        'ukuran sepatu',
+        'ukuran_topi'
     ];
 
-    // Relasi ke UPT
-    public function upt()
-    {
-        return $this->belongsTo(Upt::class);
-    }
+    protected $dates = [
+        'tanggal_lahir',
+        'tanggal_lahir_ahli_waris',
+        'terhitung_mulai_tugas',
+        'created_at',
+        'updated_at'
+    ];
 
-    // Relasi ke ULTG
-    public function ultg()
-    {
-        return $this->belongsTo(Ultg::class);
-    }
+    protected $casts = [
+        'usia' => 'integer',
+        'jumlah_anak' => 'integer',
+        'ukuran_celana' => 'integer',
+        'ukuran sepatu' => 'integer',
+        'ukuran_topi' => 'integer'
+    ];
 
-    // Relasi ke Lokasi Kerja
     public function lokasikerja()
     {
         return $this->belongsTo(Lokasikerja::class, 'lokasikerja_id');
+    }
+
+    public function ultg()
+    {
+        return $this->belongsTo(Ultg::class, 'ultg_id');
+    }
+
+    public function upt()
+    {
+        return $this->belongsTo(Upt::class, 'upt_id');
+    }
+
+    public function getFotoUrlAttribute()
+    {
+        if ($this->foto) {
+            return asset('storage/' . $this->foto);
+        }
+        return null;
     }
 }

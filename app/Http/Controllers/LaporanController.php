@@ -53,6 +53,12 @@ class LaporanController extends Controller
         ));
     }
 
+    public function getUltg($upt_id)
+    {
+        $ultgs = Ultg::where('upt_id', $upt_id)->pluck('nama_ultg', 'id');
+        return response()->json($ultgs);
+    }
+
     public function getLokasiKerja($ultg_id)
     {
         $lokasi = Lokasikerja::where('ultg_id', $ultg_id)->get();
