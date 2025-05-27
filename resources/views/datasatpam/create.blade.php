@@ -5,25 +5,6 @@
     <div class="page-inner">
         <div class="page-header">
             <h4 class="page-title">Tambah Data Satpam</h4>
-            <!-- <ul class="breadcrumbs">
-                          <li class="nav-home">
-                            <a href="#">
-                              <i class="flaticon-home"></i>
-                            </a>
-                          </li>
-                          <li class="separator">
-                            <i class="flaticon-right-arrow"></i>
-                          </li>
-                          <li class="nav-item">
-                            <a href="#">Forms</a>
-                          </li>
-                          <li class="separator">
-                            <i class="flaticon-right-arrow"></i>
-                          </li>
-                          <li class="nav-item">
-                            <a href="#">Basic Form</a>
-                          </li>
-                        </ul> -->
         </div>
         <div class="row">
             <div class="col-md-12">
@@ -47,7 +28,7 @@
                                     </div>
                                     <div class="form-group">
                                         <label for="nama">No Induk Pegawai</label>
-                                        <input type="text" class="form-control @error('nip') is-invalid @enderror"
+                                        <input type="number" class="form-control @error('nip') is-invalid @enderror"
                                             id="nip" name="nip" placeholder="Masukkan No Induk Pegawai"
                                             value="{{ old('nip') }}">
                                         @error('nip')
@@ -56,7 +37,7 @@
                                     </div>
                                     <div class="form-group">
                                         <label for="nama">NIK</label>
-                                        <input type="text" class="form-control @error('nik') is-invalid @enderror"
+                                        <input type="number" class="form-control @error('nik') is-invalid @enderror"
                                             id="nik" name="nik" placeholder="Masukkan No Induk Kependudukan"
                                             value="{{ old('nik') }}">
                                         @error('nik')
@@ -479,7 +460,7 @@
                                     </div>
                                     <div class="form-group">
                                         <label for="nama">No. DPLK</label>
-                                        <input type="text" class="form-control @error('no_dplk') is-invalid @enderror"
+                                        <input type="number" class="form-control @error('no_dplk') is-invalid @enderror"
                                             id="no_dplk" name="no_dplk"
                                             placeholder="Masukkan Nomor Dana Pensiun Lembaga Keuangan"
                                             value="{{ old('no_dplk') }}">
@@ -524,7 +505,7 @@
                                     </div>
                                     <div class="form-group">
                                         <label for="nama">No. KTA</label>
-                                        <input type="text" class="form-control @error('no_kta') is-invalid @enderror"
+                                        <input type="number" class="form-control @error('no_kta') is-invalid @enderror"
                                             id="no_kta" name="no_kta" placeholder="Masukkan No. KTA"
                                             value="{{ old('no_kta') }}">
                                         @error('no_kta')
@@ -562,7 +543,7 @@
                                     </div>
                                     <div class="form-group">
                                         <label for="nama">No. Kartu BPJS Ketenagakerjaan</label>
-                                        <input type="text"
+                                        <input type="number"
                                             class="form-control @error('no_bpjs_ketenagakerjaan') is-invalid @enderror"
                                             id="no_bpjs_ketenagakerjaan" name="no_bpjs_ketenagakerjaan"
                                             placeholder="Masukkan No. Kartu BPJS Ketenagakerjaan"

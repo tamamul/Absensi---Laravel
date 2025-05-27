@@ -22,8 +22,8 @@
                 @method('PUT')
                 
                 <div class="form-group">
-                  <label for="id">Id ULTG</label>
-                  <input type="text" class="form-control" id="id" name="id" value="{{ $ultg->id }}" readonly>
+                  <label for="id">Kode ULTG</label>
+                  <input type="text" class="form-control" id="id" name="id" value="{{ $ultg->kode_ultg }}" readonly>
                 </div>
 
                 <div class="form-group">
