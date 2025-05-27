@@ -1,9 +1,10 @@
 <div class="main-header">
     <!-- Logo Header -->
     <div class="logo-header" data-background-color="white">
-
         <a href="/" class="logo">
-            <img src="../assets/img/logo-AMP.jpg" alt="navbar brand" class="navbar-brand">
+            <i class="fas fa-cogs" style="font-size: 1.8rem; color: #2a9d8f; margin-left: 15px; vertical-align: middle;"></i>
+            <span class="navbar-brand" style="font-weight: bold; color: #264653; margin-left: 8px; font-size: 1.2rem; vertical-align: middle;">AMP System</span>
+            {{-- <img src="../assets/img/logo-AMP.jpg" alt="navbar brand" class="navbar-brand"> --}}
         </a>
         <button class="navbar-toggler sidenav-toggler ml-auto" type="button" data-toggle="collapse"
             data-target="collapse" aria-expanded="false" aria-label="Toggle navigation">

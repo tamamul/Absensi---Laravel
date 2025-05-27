@@ -8,7 +8,27 @@
     </style>
 </head>
 <body>
-    <h3 style="text-align:center;">Laporan Absensi Satpam</h3>
+    <div style="text-align:center;">
+        <h3>Laporan Absensi Satpam</h3>
+        @if(isset($tanggal) && $tanggal)
+            @php
+                [$tahun, $bulan] = explode('-', $tanggal);
+                $namaBulan = \Carbon\Carbon::createFromDate($tahun, $bulan, 1)->locale('id')->monthName;
+            @endphp
+            <h4>Periode: {{ $namaBulan }} {{ $tahun }}</h4>
+        @endif
+    </div>
+    <div style="margin-bottom: 15px; font-size: 10px;">
+        @if(isset($upt_id) && $selectedUpt = $allUptNames->find($upt_id))
+            <strong>UPT:</strong> {{ $selectedUpt->nama_upt }}<br>
+        @endif
+        @if(isset($ultg_id) && $selectedUltg = $ultgs->find($ultg_id))
+            <strong>ULTG:</strong> {{ $selectedUltg->nama_ultg }}<br>
+        @endif
+        @if(isset($lokasikerja_id) && $selectedLokasi = $lokasikerjas->find($lokasikerja_id))
+            <strong>Lokasi Kerja:</strong> {{ $selectedLokasi->nama_lokasikerja }}<br>
+        @endif
+    </div>
     <table>
         <thead>
             <tr>

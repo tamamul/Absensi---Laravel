@@ -58,38 +58,32 @@ class LokasikerjaController extends Controller
 
     public function edit($id)
     {
-        $lokasikerja = Lokasikerja::findOrFail($id);
-        $allUltgNames = Ultg::all();
-        return view('lokasikerja.edit', compact('lokasikerja', 'allUltgNames'));
+        $lokasikerja = Lokasikerja::with('ultg.upt')->findOrFail($id);
+        $upts = Upt::all();
+        $ultgs = Ultg::all();
+        return view('lokasikerja.edit', compact('lokasikerja', 'upts', 'ultgs'));
     }
 
     public function update(Request $request, $id)
     {
-        $request->validate([
+        $validated = $request->validate([
+            'nama_lokasikerja' => 'required|string|max:255',
+            'upt_id' => 'required|exists:upt,id',
             'ultg_id' => 'required|exists:ultg,id',
-            'nama_lokasikerja' => 'required|string|max:255|unique:upt,nama_upt',
             'latitude' => 'required|numeric',
             'longitude' => 'required|numeric',
-            'radius' => 'required|numeric',
-        ], [
-            'upt_id.required' => 'Nama UPT wajib dipilih.',
-            'ultg_id.required' => 'Nama ULTG wajib dipilih.',
-            'nama_lokasikerja.required' => 'Nama Lokasi Kerja wajib diisi.',
-            'nama_lokasikerja.unique' => 'Nama Lokasi Kerja sudah digunakan.',
-            'latitude.required' => 'Latitude wajib diisi.',
-            'longitude.required' => 'Longitute wajib diisi.',
-            'radius.required' => 'Radius wajib diisi.',
-        ]); 
+            'radius' => 'required|numeric|min:0',
+        ]);
 
         $lokasikerja = Lokasikerja::findOrFail($id);
-        $lokasikerja->ultg_id = $request->ultg_id;
         $lokasikerja->nama_lokasikerja = $request->nama_lokasikerja;
+        $lokasikerja->ultg_id = $request->ultg_id;
         $lokasikerja->latitude = $request->latitude;
         $lokasikerja->longitude = $request->longitude;
         $lokasikerja->radius = $request->radius;
         $lokasikerja->save();
 
-        return redirect()->route('lokasikerja.index')->with('updated', 'Data lokasi kerja berhasil diupdate.');
+        return redirect()->route('lokasikerja.index')->with('success', 'Data lokasi kerja berhasil diupdate.');
     }
 
     public function destroy($id)
