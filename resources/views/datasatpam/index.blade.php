@@ -60,9 +60,9 @@
                                         <tr>
                                             <td>{{ $loop->iteration }}</td>
                                             <td>
-                                                <img src="{{ $data->foto_url }}" alt="Foto" width="50"
-                                                    class="img-thumbnail">
+                                                <i class="fas fa-user fa-3x"></i>
                                             </td>
+
                                             <td>{{ $data->kode_satpam }}</td>
                                             <td>{{ $data->nip }}</td>
                                             <td>{{ $data->nik }}</td>
