@@ -60,7 +60,20 @@
                                         <tr>
                                             <td>{{ $loop->iteration }}</td>
                                             <td>
-                                                <i class="fas fa-user fa-3x"></i>
+                                                @php
+                                                    $displayIconInsteadOfImage = false;
+                                                    if ($data->foto && !\Illuminate\Support\Str::startsWith((string)$data->foto, 'foto_satpam/')) {
+                                                        $displayIconInsteadOfImage = true;
+                                                    }
+                                                @endphp
+                                                @if ($displayIconInsteadOfImage)
+                                                    <i class="fas fa-user fa-3x"></i>
+                                                @elseif ($data->foto_url)
+                                                    <img src="{{ $data->foto_url }}" alt="Foto Satpam"
+                                                        style="width: 50px; height: 50px; object-fit: cover; border-radius: 50%;">
+                                                @else
+                                                    <i class="fas fa-user fa-3x"></i>
+                                                @endif
                                             </td>
 
                                             <td>{{ $data->kode_satpam }}</td>
