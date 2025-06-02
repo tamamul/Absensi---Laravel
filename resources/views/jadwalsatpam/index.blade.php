@@ -1,5 +1,5 @@
 @extends('layouts.master')
-@section('title', 'atlantis')
+@section('title', 'Jadwal Satpam')
 @section('content')
 
     <div class="page-inner">
@@ -88,45 +88,67 @@
                                     <thead>
                                         <tr>
                                             <th>No</th>
-                                            <th>Nama Satpam</th>
-                                            <th>Nama Lokasi Kerja</th>
+                                            <th>Lokasi Kerja</th>
+                                            <th>ULTG</th>
+                                            <th>UPT</th>
+                                            <th>Periode</th>
+                                            <th>Total Jadwal</th>
                                             <th>Aksi</th>
                                         </tr>
                                     </thead>
-                                    @php
-                                        $uniqueSatpams = $jadwalsatpams->unique('satpam_id');
-                                    @endphp
                                     <tbody>
-                                        @foreach ($uniqueSatpams as $no => $jadwal)
+                                        @php
+                                            $no = 1;
+                                            $currentBulanTahun = request('bulan_tahun');
+
+                                            if ($currentBulanTahun) {
+                                                [$tahun, $bulan] = explode('-', $currentBulanTahun);
+                                                $periodeText =
+                                                    DateTime::createFromFormat('!m', $bulan)->format('F') .
+                                                    ' ' .
+                                                    $tahun;
+                                            } else {
+                                                $tahun = date('Y');
+                                                $periodeText = 'Tahun ' . $tahun;
+                                            }
+                                        @endphp
+
+                                        @foreach ($groupedJadwal as $lokasiId => $data)
                                             <tr>
-                                                <td>{{ $no + 1 }}</td>
-                                                <td>{{ $jadwal->datasatpam->nama ?? '-' }}</td>
+                                                <td>{{ $no++ }}</td>
+                                                <td>{{ $data['lokasi']->nama_lokasikerja }}</td>
+                                                <td>{{ $data['lokasi']->ultg->nama_ultg ?? '-' }}</td>
+                                                <td>{{ $data['lokasi']->ultg->upt->nama_upt ?? '-' }}</td>
+                                                <td>{{ $periodeText }}</td>
                                                 <td>
-                                                    {{ $jadwal->datasatpam->lokasikerja->nama_lokasikerja ?? '-' }}<br />
-                                                    <small>
-                                                        ULTG:
-                                                        {{ $jadwal->datasatpam->lokasikerja->ultg->nama_ultg ?? '-' }}<br />
-                                                        UPT:
-                                                        {{ $jadwal->datasatpam->lokasikerja->ultg->upt->nama_upt ?? '-' }}
-                                                    </small>
+                                                    <span class="badge badge-info">{{ $data['total'] }} Jadwal</span>
                                                 </td>
                                                 <td>
-                                                    <a href="{{ route('jadwalsatpam.edit', $jadwal->satpam_id) }}"
+                                                    @php
+                                                        $uptId = $data['lokasi']->ultg->upt->id ?? '';
+                                                        $ultgId = $data['lokasi']->ultg->id ?? '';
+                                                    @endphp
+                                                    <a href="{{ route('jadwalsatpam.edit', [
+                                                        'upt_id' => $uptId,
+                                                        'ultg_id' => $ultgId,
+                                                        'lokasikerja_id' => $lokasiId,
+                                                        'bulan' => $currentBulanTahun ? explode('-', $currentBulanTahun)[1] : date('m'),
+                                                        'tahun' => $tahun,
+                                                    ]) }}"
                                                         class="btn btn-warning btn-sm">
-                                                        <i class="fa fa-edit"></i> Edit
+                                                        <i class="fa fa-edit"></i> Edit Jadwal
                                                     </a>
-                                                    {{-- <form action="{{ route('jadwalsatpam.destroy', $jadwal->id) }}"
-                                                        method="POST" style="display:inline-block;"
-                                                        onsubmit="return confirm('Yakin ingin menghapus data ini?')">
-                                                        @csrf
-                                                        @method('DELETE')
-                                                        <button type="submit" class="btn btn-danger btn-sm">
-                                                            <i class="fa fa-trash"></i> Delete
-                                                        </button>
-                                                    </form> --}}
                                                 </td>
                                             </tr>
                                         @endforeach
+
+                                        @if (count($groupedJadwal) == 0)
+                                            <tr>
+                                                <td colspan="7" class="text-center">
+                                                    <em>Tidak ada data jadwal untuk periode dan filter yang dipilih</em>
+                                                </td>
+                                            </tr>
+                                        @endif
                                     </tbody>
                                 </table>
                             </div>

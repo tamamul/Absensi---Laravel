@@ -126,8 +126,8 @@ Route::get('lokasikerja/get-ultg/{upt_id}', [LokasikerjaController::class, 'getU
 Route::get('/jadwalsatpam', [JadwalsatpamController::class, 'index'])->name('jadwalsatpam.index');
 Route::get('/jadwalsatpam/create', [JadwalsatpamController::class, 'create'])->name('jadwalsatpam.create');
 Route::post('/jadwalsatpam', [JadwalsatpamController::class, 'store'])->name('jadwalsatpam.store');
-Route::get('/jadwalsatpam/{id}/edit', [JadwalsatpamController::class, 'edit'])->name('jadwalsatpam.edit');
-Route::put('/jadwalsatpam/{id}', [JadwalsatpamController::class, 'update'])->name('jadwalsatpam.update');
+Route::get('/jadwalsatpam/edit', [JadwalsatpamController::class, 'edit'])->name('jadwalsatpam.edit');
+Route::put('/jadwalsatpam', [JadwalsatpamController::class, 'update'])->name('jadwalsatpam.update');
 Route::post('/jadwalsatpam/delete/{id}', [JadwalsatpamController::class, 'destroy'])->name('jadwalsatpam.destroy');
 Route::get('/get-ultg/{uptId}', [JadwalsatpamController::class, 'getUltg']);
 Route::get('/get-lokasi/{ultgId}', [JadwalsatpamController::class, 'getLokasiKerja']);
