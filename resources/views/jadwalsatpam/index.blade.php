@@ -31,7 +31,7 @@
                                         <div class="row">
                                             <div class="col-md-3">
                                                 <label for="upt_id">Nama UPT</label>
-                                                <select id="upt_id" name="upt_id" class="form-control" required>
+                                                <select id="upt_id" name="upt_id" class="form-control">
                                                     <option value="">Pilih UPT</option>
                                                     @foreach ($upts as $upt)
                                                         <option value="{{ $upt->id }}"
@@ -43,7 +43,7 @@
                                             </div>
                                             <div class="col-md-3">
                                                 <label for="ultg_id">Nama ULTG</label>
-                                                <select id="ultg_id" name="ultg_id" class="form-control" required>
+                                                <select id="ultg_id" name="ultg_id" class="form-control">
                                                     <option value="">Pilih ULTG</option>
                                                     @foreach ($ultgs as $ultg)
                                                         @if (request('upt_id') == $ultg->upt_id)
@@ -57,8 +57,7 @@
                                             </div>
                                             <div class="col-md-3">
                                                 <label for="lokasikerja_id">Lokasi Kerja</label>
-                                                <select id="lokasikerja_id" name="lokasikerja_id" class="form-control"
-                                                    required>
+                                                <select id="lokasikerja_id" name="lokasikerja_id" class="form-control">
                                                     <option value="">Pilih Lokasi Kerja</option>
                                                     @foreach ($lokasikerjas as $lokasi)
                                                         @if (request('ultg_id') == $lokasi->ultg_id)
@@ -73,8 +72,7 @@
                                             <div class="col-md-2">
                                                 <label for="picker_bulan_tahun">Tahun - Bulan</label>
                                                 <input type="month" class="form-control" id="picker_bulan_tahun"
-                                                    name="bulan_tahun" value="{{ request('bulan_tahun', date('Y-m')) }}"
-                                                    required>
+                                                    name="bulan_tahun" value="{{ request('bulan_tahun', date('Y-m')) }}">
                                             </div>
                                         </div>
                                         <div class="mt-3">
