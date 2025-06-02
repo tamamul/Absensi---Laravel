@@ -57,32 +57,31 @@ class JadwalsatpamController extends Controller
         $ultgs = Ultg::all();
         $lokasikerjas = Lokasikerja::all();
         $satpamList = [];
+        $selectedLokasikerja = null;
 
         // List satpam berdasarkan lokasi kerja jika sudah dipilih
         if ($request->filled('lokasikerja_id')) {
             $satpamList = Datasatpam::where('lokasikerja_id', $request->lokasikerja_id)->get();
-        }
-
-        // Cek jika filter satpam dipilih, ambil satpam yang dipilih saja
-        $selectedSatpam = null;
-        if ($request->filled('satpam_id')) {
-            $selectedSatpam = Datasatpam::find($request->satpam_id);
+            $selectedLokasikerja = Lokasikerja::find($request->lokasikerja_id);
         }
 
         $jadwalData = [];
-        if ($request->filled(['satpam_id', 'bulan', 'tahun'])) {
+        if ($request->filled(['lokasikerja_id', 'bulan', 'tahun'])) {
             $bulan = $request->bulan;
             $tahun = $request->tahun;
 
-            // Ambil jadwal hanya untuk satu satpam yang dipilih
-            $jadwalRows = Jadwalsatpam::where('satpam_id', $request->satpam_id)
+            // Ambil semua jadwal untuk lokasi kerja tersebut pada bulan dan tahun yang dipilih
+            $jadwalRows = Jadwalsatpam::with('datasatpam')
+                ->whereHas('datasatpam', function ($query) use ($request) {
+                    $query->where('lokasikerja_id', $request->lokasikerja_id);
+                })
                 ->whereMonth('tanggal', $bulan)
                 ->whereYear('tanggal', $tahun)
                 ->get();
 
-            // Mapping: [tanggal] = shift
+            // Mapping: [tanggal][shift] = satpam_id
             foreach ($jadwalRows as $jadwal) {
-                $jadwalData[$jadwal->tanggal] = $jadwal->shift;
+                $jadwalData[$jadwal->tanggal][$jadwal->shift] = $jadwal->satpam_id;
             }
         }
 
@@ -91,12 +90,7 @@ class JadwalsatpamController extends Controller
             'ultgs' => $ultgs,
             'lokasikerjas' => $lokasikerjas,
             'satpamList' => $satpamList,
-            'selectedUpt' => $request->upt_id,
-            'selectedUltg' => $request->ultg_id,
-            'selectedLokasikerja' => $request->lokasikerja_id,
-            'selectedSatpam' => $request->satpam_id,
-            'selectedBulan' => $request->bulan,
-            'selectedTahun' => $request->tahun,
+            'selectedLokasikerja' => $selectedLokasikerja,
             'jadwalData' => $jadwalData,
         ]);
     }
@@ -105,27 +99,40 @@ class JadwalsatpamController extends Controller
     {
         $validated = $request->validate([
             'lokasikerja_id' => 'required|exists:lokasikerja,id',
-            'satpam_id' => 'required|exists:datasatpam,id',
             'bulan' => 'required|integer|min:1|max:12',
             'tahun' => 'required|integer|min:2020|max:2100',
             'jadwal' => 'required|array',
         ]);
 
-        foreach ($request->jadwal as $tanggal => $shift) {
-            if ($shift) {
-                $fullDate = sprintf('%04d-%02d-%02d', $request->tahun, $request->bulan, $tanggal);
-                Jadwalsatpam::updateOrCreate(
-                    [
-                        'satpam_id' => $request->satpam_id,
+        // Hapus jadwal lama untuk lokasi kerja ini pada bulan dan tahun yang dipilih
+        $satpamIds = Datasatpam::where('lokasikerja_id', $request->lokasikerja_id)->pluck('id');
+        Jadwalsatpam::whereIn('satpam_id', $satpamIds)
+            ->whereMonth('tanggal', $request->bulan)
+            ->whereYear('tanggal', $request->tahun)
+            ->delete();
+
+        // Simpan jadwal baru
+        foreach ($request->jadwal as $tanggal => $shifts) {
+            $fullDate = sprintf('%04d-%02d-%02d', $request->tahun, $request->bulan, $tanggal);
+
+            foreach ($shifts as $shift => $satpamId) {
+                if ($satpamId) { // Jika satpam dipilih
+                    Jadwalsatpam::create([
+                        'satpam_id' => $satpamId,
                         'tanggal' => $fullDate,
-                    ],
-                    [
                         'shift' => $shift,
-                    ]
-                );
+                    ]);
+                }
             }
         }
-        return redirect()->route('jadwalsatpam.create')->with('success', 'Jadwal berhasil disimpan.');
+
+        return redirect()->route('jadwalsatpam.create', [
+            'lokasikerja_id' => $request->lokasikerja_id,
+            'bulan' => $request->bulan,
+            'tahun' => $request->tahun,
+            'upt_id' => $request->input('upt_id'),
+            'ultg_id' => $request->input('ultg_id')
+        ])->with('success', 'Jadwal berhasil disimpan.');
     }
 
     public function edit(Request $request, $id)

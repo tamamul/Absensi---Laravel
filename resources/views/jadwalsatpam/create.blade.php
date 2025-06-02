@@ -4,7 +4,7 @@
 
     <div class="page-inner">
         <div class="page-header">
-            <h4 class="page-title">Tambah Jadwal Satpam</h4>
+            <h4 class="page-title">Jadwal Satpam</h4>
         </div>
         <div class="row">
             <div class="col-md-12">
@@ -54,18 +54,7 @@
                                         @endforeach
                                     </select>
                                 </div>
-                                <div class="col-md-3">
-                                    <label for="satpam_id">Nama Satpam</label>
-                                    <select name="satpam_id" id="satpam_id" class="form-control" required>
-                                        <option value="">Pilih Satpam</option>
-                                        @foreach ($satpamList as $s)
-                                            <option value="{{ $s->id }}"
-                                                {{ request('satpam_id') == $s->id ? 'selected' : '' }}>{{ $s->nama }}
-                                            </option>
-                                        @endforeach
-                                    </select>
-                                </div>
-                                <div class="col-md-2 mt-2">
+                                <div class="col-md-2">
                                     <label for="bulan">Bulan</label>
                                     <select name="bulan" id="bulan" class="form-control" required>
                                         @for ($i = 1; $i <= 12; $i++)
@@ -77,7 +66,7 @@
                                         @endfor
                                     </select>
                                 </div>
-                                <div class="col-md-1 mt-2">
+                                <div class="col-md-1">
                                     <label for="tahun">Tahun</label>
                                     <input type="number" name="tahun" id="tahun" class="form-control"
                                         value="{{ request('tahun', date('Y')) }}" required>
@@ -89,100 +78,110 @@
                         </form>
 
                         {{-- Jadwal Form --}}
-                        @if ($selectedSatpam && $selectedBulan && $selectedTahun)
+                        @if (request('lokasikerja_id') && request('bulan') && request('tahun'))
                             <form action="{{ route('jadwalsatpam.store') }}" method="POST">
                                 @csrf
-                                <input type="hidden" name="bulan" value="{{ $selectedBulan }}">
-                                <input type="hidden" name="tahun" value="{{ $selectedTahun }}">
+                                <input type="hidden" name="bulan" value="{{ request('bulan') }}">
+                                <input type="hidden" name="tahun" value="{{ request('tahun') }}">
                                 <input type="hidden" name="lokasikerja_id" value="{{ request('lokasikerja_id') }}">
-                                <input type="hidden" name="satpam_id" value="{{ $selectedSatpam }}">
+
+                                <div class="mb-3">
+                                    <h5>Lokasi: {{ $selectedLokasikerja->nama_lokasikerja ?? '' }}</h5>
+                                    <h6>Bulan: {{ DateTime::createFromFormat('!m', request('bulan'))->format('F') }} {{ request('tahun') }}</h6>
+                                </div>
 
                                 <table class="table table-bordered table-calendar">
                                     <thead>
                                         <tr>
-                                            <th colspan="8" class="text-center">
-                                                Jadwal Bulan
-                                                {{ DateTime::createFromFormat('!m', $selectedBulan)->format('F') }}
-                                                {{ $selectedTahun }}
-                                            </th>
-                                        </tr>
-                                        <tr>
+                                            <th>Tanggal</th>
                                             <th>Hari</th>
-                                            @php
-                                                $days = [
-                                                    'Minggu',
-                                                    'Senin',
-                                                    'Selasa',
-                                                    'Rabu',
-                                                    'Kamis',
-                                                    'Jumat',
-                                                    'Sabtu',
-                                                ];
-                                            @endphp
-                                            @foreach ($days as $hari)
-                                                <th>{{ $hari }}</th>
-                                            @endforeach
+                                            <th>Shift P</th>
+                                            <th>Shift S</th>
+                                            <th>Shift M</th>
+                                            <th>Shift L</th>
                                         </tr>
                                     </thead>
                                     <tbody>
                                         @php
-                                            $bulan = intval($selectedBulan);
-                                            $tahun = intval($selectedTahun);
+                                            $bulan = intval(request('bulan'));
+                                            $tahun = intval(request('tahun'));
                                             $jumlahHari = cal_days_in_month(CAL_GREGORIAN, $bulan, $tahun);
-                                            $calendar = [];
-                                            $day = 1;
-                                            $firstDayOfWeek = date('w', strtotime("$tahun-$bulan-01")); // 0 = Minggu
-                                            $totalWeeks = ceil(($jumlahHari + $firstDayOfWeek) / 7);
-                                            for ($week = 0; $week < $totalWeeks; $week++) {
-                                                for ($d = 0; $d < 7; $d++) {
-                                                    $calendar[$week][$d] = null;
-                                                }
-                                            }
-                                            for (
-                                                $i = 0, $w = 0, $d = $firstDayOfWeek;
-                                                $day <= $jumlahHari;
-                                                $i++, $d++
-                                            ) {
-                                                if ($d == 7) {
-                                                    $w++;
-                                                    $d = 0;
-                                                }
-                                                $calendar[$w][$d] = $day;
-                                                $day++;
-                                            }
+                                            $namaHari = ['Minggu', 'Senin', 'Selasa', 'Rabu', 'Kamis', 'Jumat', 'Sabtu'];
                                         @endphp
-                                        @for ($w = 0; $w < count($calendar); $w++)
+                                        
+                                        @for ($tanggal = 1; $tanggal <= $jumlahHari; $tanggal++)
+                                            @php
+                                                $fullDate = sprintf('%04d-%02d-%02d', $tahun, $bulan, $tanggal);
+                                                $dayOfWeek = date('w', strtotime($fullDate));
+                                                $namaHariIni = $namaHari[$dayOfWeek];
+                                            @endphp
                                             <tr>
-                                                <td>Minggu {{ $w + 1 }}</td>
-                                                @for ($d = 0; $d < 7; $d++)
-                                                    @php $tgl = $calendar[$w][$d]; @endphp
-                                                    <td style="padding:2px;">
-                                                        @if ($tgl)
-                                                            <strong>{{ $tgl }}</strong>
+                                                <td class="text-center"><strong>{{ $tanggal }}</strong></td>
+                                                <td class="text-center">{{ $namaHariIni }}</td>
+                                                
+                                                {{-- Shift P --}}
+                                                <td>
+                                                    <select name="jadwal[{{ $tanggal }}][P]" class="form-control form-control-sm">
+                                                        <option value="">Pilih Satpam</option>
+                                                        @foreach ($satpamList as $satpam)
                                                             @php
-                                                                $fullDate = sprintf(
-                                                                    '%04d-%02d-%02d',
-                                                                    $tahun,
-                                                                    $bulan,
-                                                                    $tgl,
-                                                                );
-                                                                $shift = $jadwalData[$fullDate] ?? '';
+                                                                $currentShift = $jadwalData[$fullDate]['P'] ?? '';
                                                             @endphp
-                                                            <select name="jadwal[{{ $tgl }}]"
-                                                                class="form-control form-control-sm mt-1">
-                                                                <option value="">-</option>
-                                                                <option value="P"
-                                                                    {{ $shift == 'P' ? 'selected' : '' }}>P</option>
-                                                                <option value="S"
-                                                                    {{ $shift == 'S' ? 'selected' : '' }}>S</option>
-                                                                <option value="M"
-                                                                    {{ $shift == 'M' ? 'selected' : '' }}>M</option>
-                                                                <option value="L"
-                                                                    {{ $shift == 'L' ? 'selected' : '' }}>L</option>
-                                                            </select>
-                                                        @endif
-                                                    </td>
-                                                @endfor
+                                                            <option value="{{ $satpam->id }}"
+                                                                {{ $currentShift == $satpam->id ? 'selected' : '' }}>
+                                                                {{ $satpam->nama }}
+                                                            </option>
+                                                        @endforeach
+                                                    </select>
+                                                </td>
+                                                
+                                                {{-- Shift S --}}
+                                                <td>
+                                                    <select name="jadwal[{{ $tanggal }}][S]" class="form-control form-control-sm">
+                                                        <option value="">Pilih Satpam</option>
+                                                        @foreach ($satpamList as $satpam)
+                                                            @php
+                                                                $currentShift = $jadwalData[$fullDate]['S'] ?? '';
+                                                            @endphp
+                                                            <option value="{{ $satpam->id }}"
+                                                                {{ $currentShift == $satpam->id ? 'selected' : '' }}>
+                                                                {{ $satpam->nama }}
+                                                            </option>
+                                                        @endforeach
+                                                    </select>
+                                                </td>
+                                                
+                                                {{-- Shift M --}}
+                                                <td>
+                                                    <select name="jadwal[{{ $tanggal }}][M]" class="form-control form-control-sm">
+                                                        <option value="">Pilih Satpam</option>
+                                                        @foreach ($satpamList as $satpam)
+                                                            @php
+                                                                $currentShift = $jadwalData[$fullDate]['M'] ?? '';
+                                                            @endphp
+                                                            <option value="{{ $satpam->id }}"
+                                                                {{ $currentShift == $satpam->id ? 'selected' : '' }}>
+                                                                {{ $satpam->nama }}
+                                                            </option>
+                                                        @endforeach
+                                                    </select>
+                                                </td>
+                                                
+                                                {{-- Shift L --}}
+                                                <td>
+                                                    <select name="jadwal[{{ $tanggal }}][L]" class="form-control form-control-sm">
+                                                        <option value="">Pilih Satpam</option>
+                                                        @foreach ($satpamList as $satpam)
+                                                            @php
+                                                                $currentShift = $jadwalData[$fullDate]['L'] ?? '';
+                                                            @endphp
+                                                            <option value="{{ $satpam->id }}"
+                                                                {{ $currentShift == $satpam->id ? 'selected' : '' }}>
+                                                                {{ $satpam->nama }}
+                                                            </option>
+                                                        @endforeach
+                                                    </select>
+                                                </td>
                                             </tr>
                                         @endfor
                                     </tbody>
@@ -203,7 +202,6 @@
             var uptID = $(this).val();
             $('#ultg_id').html('<option value="">Pilih ULTG</option>');
             $('#lokasikerja_id').html('<option value="">Pilih Lokasi</option>');
-            $('#satpam_id').html('<option value="">Pilih Satpam</option>');
             if (uptID) {
                 $.get('/get-ultg/' + uptID, function(data) {
                     $.each(data, function(id, nama) {
@@ -216,42 +214,37 @@
         $('#ultg_id').on('change', function() {
             var ultgID = $(this).val();
             $('#lokasikerja_id').html('<option value="">Pilih Lokasi</option>');
-            $('#satpam_id').html('<option value="">Pilih Satpam</option>');
             if (ultgID) {
                 $.get('/get-lokasi/' + ultgID, function(data) {
                     $.each(data, function(id, nama) {
-                        $('#lokasikerja_id').append('<option value="' + id + '">' + nama +
-                            '</option>');
-                    });
-                });
-            }
-        });
-
-        $('#lokasikerja_id').on('change', function() {
-            var lokasiID = $(this).val();
-            $('#satpam_id').html('<option value="">Pilih Satpam</option>');
-            if (lokasiID) {
-                $.get('/get-satpam/' + lokasiID, function(data) {
-                    $.each(data, function(id, nama) {
-                        $('#satpam_id').append('<option value="' + id + '">' + nama + '</option>');
+                        $('#lokasikerja_id').append('<option value="' + id + '">' + nama + '</option>');
                     });
                 });
             }
         });
     </script>
+    
     <style>
         .table-calendar td,
         .table-calendar th {
             text-align: center;
             vertical-align: middle;
-            padding: 4px !important;
+            padding: 8px !important;
             font-size: 12px;
         }
 
         .table-calendar select {
-            width: 48px;
-            margin: 0 auto;
+            width: 100%;
             font-size: 11px;
+        }
+        
+        .table-calendar th {
+            background-color: #f8f9fa;
+            font-weight: bold;
+        }
+        
+        .table-calendar tr:nth-child(even) {
+            background-color: #f8f9fa;
         }
     </style>
 @endsection
