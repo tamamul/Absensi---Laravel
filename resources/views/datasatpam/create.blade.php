@@ -28,7 +28,7 @@
                                     </div>
                                     <div class="form-group">
                                         <label for="nama">No Induk Pegawai</label>
-                                        <input type="number" class="form-control @error('nip') is-invalid @enderror"
+                                        <input type="text" class="form-control @error('nip') is-invalid @enderror"
                                             id="nip" name="nip" placeholder="Masukkan No Induk Pegawai"
                                             value="{{ old('nip') }}">
                                         @error('nip')
@@ -505,7 +505,7 @@
                                     </div>
                                     <div class="form-group">
                                         <label for="nama">No. KTA</label>
-                                        <input type="number" class="form-control @error('no_kta') is-invalid @enderror"
+                                        <input type="text" class="form-control @error('no_kta') is-invalid @enderror"
                                             id="no_kta" name="no_kta" placeholder="Masukkan No. KTA"
                                             value="{{ old('no_kta') }}">
                                         @error('no_kta')
