@@ -11,10 +11,35 @@ class AbsensiController extends Controller
 {
     public function index(Request $request)
     {
-        $satpams = Datasatpam::all();
+        $allUptNames = \App\Models\Upt::all();
+        $ultgs = [];
+        $lokasikerjas = [];
+        
+        // Get filter values
+        $upt_id = $request->upt_id;
+        $ultg_id = $request->ultg_id;
+        $lokasikerja_id = $request->lokasikerja_id;
         $selectedSatpam = $request->satpam_id;
         $bulan = $request->bulan ?? date('n');
         $tahun = $request->tahun ?? date('Y');
+        
+        // Get ULTG if UPT selected
+        if ($upt_id) {
+            $ultgs = \App\Models\Ultg::where('upt_id', $upt_id)->get();
+        }
+        
+        // Get Lokasi Kerja if ULTG selected  
+        if ($ultg_id) {
+            $lokasikerjas = \App\Models\Lokasikerja::where('ultg_id', $ultg_id)->get();
+        }
+
+        // Get filtered satpams
+        $satpamsQuery = \App\Models\Datasatpam::query();
+        if ($lokasikerja_id) {
+            $satpamsQuery->where('lokasikerja_id', $lokasikerja_id);
+        }
+        $satpams = $satpamsQuery->get();
+
         $absensi = [];
 
         if ($selectedSatpam) {
@@ -29,6 +54,12 @@ class AbsensiController extends Controller
         }
 
         return view('riwayat.index', compact(
+            'allUptNames',
+            'ultgs',
+            'lokasikerjas',
+            'upt_id',
+            'ultg_id',
+            'lokasikerja_id',
             'satpams',
             'selectedSatpam',
             'bulan',
