@@ -77,19 +77,59 @@
                         </div>
                     </div>
                     <div class="card-body">
-                        @if (count($laporan) > 0)
-                            <div class="mb-3">
-                                <form method="GET" action="{{ route('laporan.export') }}" target="_blank">
-                                    <input type="hidden" name="upt_id" value="{{ $upt_id }}">
-                                    <input type="hidden" name="ultg_id" value="{{ $ultg_id }}">
-                                    <input type="hidden" name="lokasikerja_id" value="{{ $lokasikerja_id }}">
-                                    <input type="hidden" name="tanggal" value="{{ $tanggal }}">
-                                    <button type="submit" class="btn btn-danger">
-                                        <i class="fa fa-file-pdf"></i> Export PDF
-                                    </button>
-                                </form>
+                        @if(session('success'))
+                            <div class="alert alert-success">
+                                {{ session('success') }}
                             </div>
                         @endif
+
+                        @if(session('error'))
+                            <div class="alert alert-danger">
+                                {{ session('error') }}
+                            </div>
+                        @endif
+
+                        @if (count($laporan) > 0)
+                            <div class="mb-3">
+                                @if($userRole == 'Pimpinan')
+                                    @if(!$isValidated)
+                                        <form method="POST" action="{{ route('laporan.validasi') }}">
+                                            @csrf
+                                            <input type="hidden" name="upt_id" value="{{ $upt_id }}">
+                                            <input type="hidden" name="ultg_id" value="{{ $ultg_id }}">
+                                            <input type="hidden" name="lokasikerja_id" value="{{ $lokasikerja_id }}">
+                                            <input type="hidden" name="tanggal" value="{{ $tanggal }}">
+                                            <button type="submit" class="btn btn-success">
+                                                <i class="fa fa-check"></i> Validasi Laporan
+                                            </button>
+                                        </form>
+                                    @else
+                                        <div class="alert alert-success">
+                                            <i class="fa fa-check"></i> Laporan sudah divalidasi
+                                        </div>
+                                    @endif
+                                @endif
+
+                                @if($userRole == 'Admin')
+                                    @if($isValidated)
+                                        <form method="GET" action="{{ route('laporan.export') }}" target="_blank">
+                                            <input type="hidden" name="upt_id" value="{{ $upt_id }}">
+                                            <input type="hidden" name="ultg_id" value="{{ $ultg_id }}">
+                                            <input type="hidden" name="lokasikerja_id" value="{{ $lokasikerja_id }}">
+                                            <input type="hidden" name="tanggal" value="{{ $tanggal }}">
+                                            <button type="submit" class="btn btn-danger">
+                                                <i class="fa fa-file-pdf"></i> Export PDF
+                                            </button>
+                                        </form>
+                                    @else
+                                        <div class="alert alert-warning">
+                                            <i class="fa fa-exclamation-triangle"></i> Laporan belum divalidasi oleh Pimpinan
+                                        </div>
+                                    @endif
+                                @endif
+                            </div>
+                        @endif
+
                         {{-- Tabel Laporan --}}
                         @if (count($laporan) > 0)
                             <div class="table-responsive mt-4">

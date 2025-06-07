@@ -144,9 +144,10 @@ Route::get('/riwayat', [AbsensiController::class, 'index'])->name('riwayat.index
 
 //Laporan
 Route::get('/laporan', [LaporanController::class, 'index'])->name('laporan.index');
+Route::post('/laporan/validasi', [LaporanController::class, 'validasi'])->name('laporan.validasi');
+Route::get('/laporan/export', [LaporanController::class, 'exportPDF'])->name('laporan.export');
 Route::get('/laporan/lokasi/{ultg_id}', [LaporanController::class, 'getLokasiKerja']);
 Route::get('/laporan/view', [LaporanController::class, 'view'])->name('laporan.view');
-Route::get('/laporan/export', [LaporanController::class, 'exportPDF'])->name('laporan.export');
 // Route::get('/get-ultg/{upt_id}', [LaporanController::class, 'getUltg']);
 // Route::get('/get-lokasi/{ultg_id}', [LaporanController::class, 'getLokasi']);
 // Route::post('/view', [LaporanController::class, 'view'])->name('laporan.view');

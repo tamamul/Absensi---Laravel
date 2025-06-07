@@ -8,6 +8,8 @@ use App\Models\Ultg;
 use App\Models\Lokasikerja;
 use App\Models\Datasatpam;
 use App\Models\Absensi;
+use App\Models\ValidasiLaporan;
+use Carbon\Carbon;
 use PDF;
 
 class LaporanController extends Controller
@@ -22,6 +24,7 @@ class LaporanController extends Controller
         $ultg_id = $request->ultg_id;
         $lokasikerja_id = $request->lokasikerja_id;
         $tanggal = $request->tanggal;
+        $isValidated = false;
 
         if ($upt_id) {
             $ultgs = Ultg::where('upt_id', $upt_id)->get();
@@ -39,7 +42,19 @@ class LaporanController extends Controller
                 ->whereYear('tanggal', $tahun)
                 ->whereMonth('tanggal', $bulan)
                 ->get();
+
+            // Cek status validasi
+            $validasi = ValidasiLaporan::where([
+                'upt_id' => $upt_id,
+                'ultg_id' => $ultg_id,
+                'lokasikerja_id' => $lokasikerja_id,
+                'periode' => Carbon::createFromDate($tahun, $bulan, 1)->format('Y-m-d')
+            ])->first();
+
+            $isValidated = $validasi ? $validasi->is_validated : false;
         }
+
+        $userRole = auth()->user()->role;
 
         return view('laporan.index', compact(
             'allUptNames',
@@ -49,7 +64,9 @@ class LaporanController extends Controller
             'upt_id',
             'ultg_id',
             'lokasikerja_id',
-            'tanggal'
+            'tanggal',
+            'isValidated',
+            'userRole'
         ));
     }
 
@@ -65,35 +82,64 @@ class LaporanController extends Controller
         return response()->json($lokasi);
     }
 
-    // Jika ingin hasil laporan di halaman terpisah
-    public function view(Request $request)
+    public function validasi(Request $request)
     {
+        if (auth()->user()->role !== 'Pimpinan') {
+            return redirect()->back()->with('error', 'Anda tidak memiliki akses untuk validasi');
+        }
+
         $request->validate([
+            'upt_id' => 'required',
             'ultg_id' => 'required',
-            'lokasi_id' => 'required',
-            'bulan' => 'required',
+            'lokasikerja_id' => 'required',
+            'tanggal' => 'required'
         ]);
 
-        $laporan = Absensi::whereHas('satpam', function ($q) use ($request) {
-            $q->where('lokasikerja_id', $request->lokasi_id)
-                ->where('ultg_id', $request->ultg_id);
-        })
-            ->whereMonth('tanggal', '=', date('m', strtotime($request->bulan)))
-            ->whereYear('tanggal', '=', date('Y', strtotime($request->bulan)))
-            ->get();
+        [$tahun, $bulan] = explode('-', $request->tanggal);
+        $periode = Carbon::createFromDate($tahun, $bulan, 1)->format('Y-m-d');
 
-        return view('laporan.hasil', [
-            'laporan' => $laporan,
-            'bulan' => $request->bulan,
-        ]);
+        ValidasiLaporan::updateOrCreate(
+            [
+                'upt_id' => $request->upt_id,
+                'ultg_id' => $request->ultg_id,
+                'lokasikerja_id' => $request->lokasikerja_id,
+                'periode' => $periode
+            ],
+            [
+                'is_validated' => true,
+                'validated_at' => now()
+            ]
+        );
+
+        return redirect()->back()->with('success', 'Laporan berhasil divalidasi');
     }
 
     public function exportPDF(Request $request)
     {
+        if (auth()->user()->role !== 'Admin') {
+            return redirect()->back()->with('error', 'Anda tidak memiliki akses untuk export PDF');
+        }
+
         $upt_id = $request->upt_id;
         $ultg_id = $request->ultg_id;
         $lokasikerja_id = $request->lokasikerja_id;
         $tanggal = $request->tanggal;
+
+        // Cek validasi
+        [$tahun, $bulan] = explode('-', $tanggal);
+        $periode = Carbon::createFromDate($tahun, $bulan, 1)->format('Y-m-d');
+
+        $validasi = ValidasiLaporan::where([
+            'upt_id' => $upt_id,
+            'ultg_id' => $ultg_id,
+            'lokasikerja_id' => $lokasikerja_id,
+            'periode' => $periode,
+            'is_validated' => true
+        ])->first();
+
+        if (!$validasi) {
+            return redirect()->back()->with('error', 'Laporan belum divalidasi oleh Pimpinan');
+        }
 
         $allUptNames = Upt::all();
         $ultgs = $ultg_id ? Ultg::where('upt_id', $upt_id)->get() : [];
@@ -120,6 +166,7 @@ class LaporanController extends Controller
             'ultg_id' => $ultg_id,
             'lokasikerja_id' => $lokasikerja_id,
             'tanggal' => $tanggal,
+            'validasi' => $validasi
         ]);
 
         return $pdf->download('laporan-absensi.pdf');
