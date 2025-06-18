@@ -23,12 +23,11 @@
                                 <form method="GET" action="">
                                     <div class="row">
                                         <div class="col-md-3">
-                                            <label for="nama_upt">Nama UPT</label>
-                                            <select class="form-control" id="nama_upt" name="upt_id">
+                                            <label for="upt_id">Nama UPT</label>
+                                            <select class="form-control" id="upt_id" name="upt_id">
                                                 <option value="">Pilih Nama UPT</option>
                                                 @foreach ($allUptNames as $item)
-                                                    <option value="{{ $item->id }}"
-                                                        {{ old('upt_id', $upt_id) == $item->id ? 'selected' : '' }}>
+                                                    <option value="{{ $item->id }}" {{ request('upt_id', $upt_id) == $item->id ? 'selected' : '' }}>
                                                         {{ $item->nama_upt }}
                                                     </option>
                                                 @endforeach
@@ -36,12 +35,11 @@
                                         </div>
 
                                         <div class="col-md-3">
-                                            <label for="nama_ultg">Nama ULTG</label>
-                                            <select class="form-control" id="nama_ultg" name="ultg_id">
+                                            <label for="ultg_id">Nama ULTG</label>
+                                            <select class="form-control" id="ultg_id" name="ultg_id">
                                                 <option value="">Pilih Nama ULTG</option>
                                                 @foreach ($ultgs as $ultg)
-                                                    <option value="{{ $ultg->id }}"
-                                                        {{ old('ultg_id', $ultg_id) == $ultg->id ? 'selected' : '' }}>
+                                                    <option value="{{ $ultg->id }}" {{ request('ultg_id', $ultg_id) == $ultg->id ? 'selected' : '' }}>
                                                         {{ $ultg->nama_ultg }}
                                                     </option>
                                                 @endforeach
@@ -49,12 +47,11 @@
                                         </div>
 
                                         <div class="col-md-3">
-                                            <label for="nama_lokasikerja">Nama Lokasi Kerja</label>
-                                            <select class="form-control" id="nama_lokasikerja" name="lokasikerja_id">
+                                            <label for="lokasikerja_id">Nama Lokasi Kerja</label>
+                                            <select class="form-control" id="lokasikerja_id" name="lokasikerja_id">
                                                 <option value="">Pilih Nama Lokasi Kerja</option>
                                                 @foreach ($lokasikerjas as $lokasi)
-                                                    <option value="{{ $lokasi->id }}"
-                                                        {{ old('lokasikerja_id', $lokasikerja_id) == $lokasi->id ? 'selected' : '' }}>
+                                                    <option value="{{ $lokasi->id }}" {{ request('lokasikerja_id', $lokasikerja_id) == $lokasi->id ? 'selected' : '' }}>
                                                         {{ $lokasi->nama_lokasikerja }}
                                                     </option>
                                                 @endforeach
@@ -62,13 +59,12 @@
                                         </div>
 
                                         <div class="col-md-3">
-                                            <label for="tanggal">Tahun - Bulan</label>
-                                            <input type="month" class="form-control" id="tanggal" name="tanggal"
-                                                value="{{ old('tanggal', $tanggal ?? date('Y-m')) }}">
+                                            <label for="tanggal">Periode</label>
+                                            <input type="month" class="form-control" id="tanggal" name="tanggal" value="{{ request('tanggal', $tanggal) }}">
                                         </div>
                                     </div>
                                     <div class="mt-3">
-                                        <button type="submit" class="btn btn-primary">View</button>
+                                        <button type="submit" class="btn btn-primary">Tampilkan</button>
                                     </div>
                                 </form>
                             </div>
@@ -176,6 +172,47 @@
                         @elseif(request()->filled(['upt_id', 'ultg_id', 'lokasikerja_id', 'tanggal']))
                             <div class="alert alert-warning mt-4">Data tidak ditemukan untuk filter yang dipilih.</div>
                         @endif
+
+                        @if($upt_id && $ultg_id && $lokasikerja_id && $tanggal)
+                            {{-- Tabel detail laporan --}}
+                            <div class="card mt-4">
+                                <div class="card-header">
+                                    <h4 class="card-title">Detail Laporan</h4>
+                                </div>
+                                <div class="card-body">
+                                    <div class="table-responsive">
+                                        <table class="table table-bordered">
+                                            <thead>
+                                                <tr>
+                                                    <th>No</th>
+                                                    <th>Tanggal</th>
+                                                    <th>Nama Satpam</th>
+                                                    <!-- <th>Shift</th> -->
+                                                    <th>Jam Masuk</th>
+                                                    <th>Jam Keluar</th>
+                                                    <th>Status</th>
+                                                    <!-- <th>Keterangan</th> -->
+                                                </tr>
+                                            </thead>
+                                            <tbody>
+                                                @foreach ($laporan as $index => $item)
+                                                <tr>
+                                                    <td>{{ $index + 1 }}</td>
+                                                    <td>{{ \Carbon\Carbon::parse($item->tanggal)->format('d/m/Y') }}</td>
+                                                    <td>{{ optional($item->satpam)->nama }}</td>
+                                                    <!-- <td>{{ $item->shift }}</td> -->
+                                                    <td>{{ $item->jam_masuk }}</td>
+                                                    <td>{{ $item->jam_keluar }}</td>
+                                                    <td>{{ $item->status }}</td>
+                                                    <!-- <td>{{ $item->keterangan }}</td> -->
+                                                </tr>
+                                                @endforeach
+                                            </tbody>
+                                        </table>
+                                    </div>
+                                </div>
+                            </div>
+                        @endif
                     </div>
                     <div class="card mb-4">
                         <div class="card-header">
@@ -237,27 +274,27 @@
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
     <script>
         // UPT -> ULTG
-        $('#nama_upt').on('change', function() {
+        $('#upt_id').on('change', function() {
             var uptID = $(this).val();
-            $('#nama_ultg').html('<option value="">Pilih Nama ULTG</option>');
-            $('#nama_lokasikerja').html('<option value="">Pilih Nama Lokasi Kerja</option>');
+            $('#ultg_id').html('<option value="">Pilih Nama ULTG</option>');
+            $('#lokasikerja_id').html('<option value="">Pilih Nama Lokasi Kerja</option>');
             if (uptID) {
                 $.get('/get-ultg/' + uptID, function(data) {
                     $.each(data, function(id, nama) {
-                        $('#nama_ultg').append('<option value="' + id + '">' + nama + '</option>');
+                        $('#ultg_id').append('<option value="' + id + '">' + nama + '</option>');
                     });
                 });
             }
         });
 
         // ULTG -> Lokasi Kerja
-        $('#nama_ultg').on('change', function() {
+        $('#ultg_id').on('change', function() {
             var ultgID = $(this).val();
-            $('#nama_lokasikerja').html('<option value="">Pilih Nama Lokasi Kerja</option>');
+            $('#lokasikerja_id').html('<option value="">Pilih Nama Lokasi Kerja</option>');
             if (ultgID) {
                 $.get('/get-lokasi/' + ultgID, function(data) {
                     $.each(data, function(index, item) {
-                        $('#nama_lokasikerja').append('<option value="' + index + '">' + item +
+                        $('#lokasikerja_id').append('<option value="' + index + '">' + item +
                             '</option>');
                     });
                 });
@@ -266,22 +303,22 @@
 
         // Saat reload, jika sudah ada upt/ultg terpilih, isi ulang select option via AJAX
         $(document).ready(function() {
-            var uptID = $('#nama_upt').val();
+            var uptID = $('#upt_id').val();
             var ultgID = "{{ old('ultg_id', $ultg_id) }}";
             var lokasiID = "{{ old('lokasikerja_id', $lokasikerja_id) }}";
 
-            if (uptID && $('#nama_ultg option').length <= 1) {
+            if (uptID && $('#ultg_id option').length <= 1) {
                 $.get('/get-ultg/' + uptID, function(data) {
                     $.each(data, function(id, nama) {
                         var selected = (id == ultgID) ? 'selected' : '';
-                        $('#nama_ultg').append('<option value="' + id + '" ' + selected + '>' +
+                        $('#ultg_id').append('<option value="' + id + '" ' + selected + '>' +
                             nama + '</option>');
                     });
                     if (ultgID) {
                         // Isi lokasi kerja jika ultg sudah terpilih
                         $.get('/get-lokasi/' + ultgID, function(data) {
                             $.each(data, function(index, item) {
-                                $('#nama_lokasikerja').append('<option value="' + index +
+                                $('#lokasikerja_id').append('<option value="' + index +
                                     '">' + item + '</option>');
                             });
                         });
