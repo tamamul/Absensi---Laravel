@@ -141,6 +141,56 @@
             @endif
         </div>
     </div>
+
+    {{-- Tambahkan tabel riwayat absen detail --}}
+    @if($selectedSatpam)
+        <div class="card mt-4">
+            <div class="card-header">
+                <h4 class="card-title">Riwayat Absensi Satpam</h4>
+            </div>
+            <div class="card-body">
+                <div class="table-responsive">
+                    <table class="table table-bordered">
+                        <thead>
+                            <tr>
+                                <th>Tanggal</th>
+                                <th>Checkin (Jam Masuk)</th>
+                                <th>Checkout (Jam Keluar)</th>
+                                <th>Lokasi Masuk (Lat, Long)</th>
+                                <th>Lokasi Keluar (Lat, Long)</th>
+                                <th>Status</th>
+                                <th>Keterangan</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @php
+                                $rows = \App\Models\Absensi::where('satpam_id', $selectedSatpam)
+                                    ->whereMonth('tanggal', $bulan)
+                                    ->whereYear('tanggal', $tahun)
+                                    ->orderBy('tanggal')
+                                    ->get();
+                            @endphp
+                            @forelse($rows as $row)
+                            <tr>
+                                <td>{{ \Carbon\Carbon::parse($row->tanggal)->format('d-m-Y') }}</td>
+                                <td>{{ $row->jam_masuk ?? '-' }}</td>
+                                <td>{{ $row->jam_keluar ?? '-' }}</td>
+                                <td>{{ $row->latitude_masuk ?? '-' }}, {{ $row->longitude_masuk ?? '-' }}</td>
+                                <td>{{ $row->latitude_keluar ?? '-' }}, {{ $row->longitude_keluar ?? '-' }}</td>
+                                <td>{{ ucfirst($row->status) }}</td>
+                                <td>{{ $row->keterangan ?? '-' }}</td>
+                            </tr>
+                            @empty
+                            <tr>
+                                <td colspan="7" class="text-center">Tidak ada data absensi.</td>
+                            </tr>
+                            @endforelse
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    @endif
 </div>
 
 {{-- AJAX Script --}}
