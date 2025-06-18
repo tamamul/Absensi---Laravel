@@ -20,11 +20,11 @@
             </ul>
         </div>
 
-        @if (session('success'))
+        <!-- @if (session('success'))
             <div class="alert alert-success">
                 {{ session('success') }}
             </div>
-        @endif
+        @endif -->
 
         <div class="row">
             <div class="col-md-12">

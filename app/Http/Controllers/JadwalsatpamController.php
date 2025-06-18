@@ -238,13 +238,14 @@ class JadwalsatpamController extends Controller
             }
         }
 
-        return redirect()->route('jadwalsatpam.edit', [
-            'lokasikerja_id' => $request->lokasikerja_id,
-            'bulan' => $request->bulan,
-            'tahun' => $request->tahun,
-            'upt_id' => $request->input('upt_id'),
-            'ultg_id' => $request->input('ultg_id')
-        ])->with('success', 'Jadwal berhasil diupdate.');
+        // return redirect()->route('jadwalsatpam.edit', [
+        //     'lokasikerja_id' => $request->lokasikerja_id,
+        //     'bulan' => $request->bulan,
+        //     'tahun' => $request->tahun,
+        //     'upt_id' => $request->input('upt_id'),
+        //     'ultg_id' => $request->input('ultg_id')
+        // ])->with('success', 'Jadwal berhasil diupdate.');
+        return redirect()->route('jadwalsatpam.index')->with('success', 'Jadwal berhasil diupdate.');
     }
 
     public function destroy($id)
