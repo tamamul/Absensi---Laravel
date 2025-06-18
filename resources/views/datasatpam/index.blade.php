@@ -84,6 +84,7 @@
                                             <td>{{ $data->jabatan }}</td>
                                             <td>{{ optional($data->lokasikerja)->nama_lokasikerja ?? '-' }}</td>
                                             <td>{{ $data->no_hp }}</td>
+                                            @if (Auth::check() && Auth::user()->role == 'Admin')
                                             <td>
                                                 <form action="{{ route('datasatpam.delete', $data->id) }}" method="POST"
                                                     class="d-inline">
@@ -99,6 +100,15 @@
                                                     </button>
                                                 </form>
                                             </td>
+                                            @endif
+                                            @if (Auth::check() && Auth::user()->role == 'Pimpinan')
+                                            <td>
+                                                <a href="{{ route('datasatpam.detail', $data->id) }}"
+                                                    class="btn btn-primary btn-sm">
+                                                    <i class="fa fa-eye"></i> Detail
+                                                </a>
+                                            </td>
+                                            @endif
                                         </tr>
                                     @endforeach
                                 </tbody>

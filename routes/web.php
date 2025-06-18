@@ -80,6 +80,7 @@ Route::get('/datasatpam', [DatasatpamController::class, 'index'])->name('datasat
 Route::get('/datasatpam/create', [DatasatpamController::class, 'create'])->name('datasatpam.create');
 Route::post('/datasatpam', [DatasatpamController::class, 'store'])->name('datasatpam.store');
 Route::get('/datasatpam/{id}/edit', [DatasatpamController::class, 'edit'])->name('datasatpam.edit');
+Route::get('/datasatpam/{id}/detail', [DatasatpamController::class, 'detail'])->name('datasatpam.detail');
 Route::put('/datasatpam/{id}', [DatasatpamController::class, 'update'])->name('datasatpam.update');
 Route::delete('/datasatpam/{id}', [DatasatpamController::class, 'destroy'])->name('datasatpam.delete');
 

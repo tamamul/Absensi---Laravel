@@ -133,6 +133,12 @@ class DatasatpamController extends Controller
         return view('datasatpam.edit', compact('data', 'allUptNames', 'allUltgNames', 'allLokasikerjaNames'));
     }
 
+    public function detail($id)
+    {
+        $datasatpam = Datasatpam::findOrFail($id);
+        return view('datasatpam.detail', compact('datasatpam'));
+    }
+
     public function update(Request $request, $id)
     {
         $request->validate([
