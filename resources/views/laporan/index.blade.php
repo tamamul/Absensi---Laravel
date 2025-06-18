@@ -15,64 +15,62 @@
             <div class="col-md-12">
                 <div class="card">
                     <div class="card-header">
-                        <div class="container">
-                            <div class="card">
-                                <div class="card-header bg-light">
-                                    <strong>Select Data</strong>
-                                </div>
-                                <div class="card-body">
-                                    <form method="GET" action="">
-                                        <div class="row">
-                                            <div class="col-md-3">
-                                                <label for="nama_upt">Nama UPT</label>
-                                                <select class="form-control" id="nama_upt" name="upt_id">
-                                                    <option value="">Pilih Nama UPT</option>
-                                                    @foreach ($allUptNames as $item)
-                                                        <option value="{{ $item->id }}"
-                                                            {{ old('upt_id', $upt_id) == $item->id ? 'selected' : '' }}>
-                                                            {{ $item->nama_upt }}
-                                                        </option>
-                                                    @endforeach
-                                                </select>
-                                            </div>
-
-                                            <div class="col-md-3">
-                                                <label for="nama_ultg">Nama ULTG</label>
-                                                <select class="form-control" id="nama_ultg" name="ultg_id">
-                                                    <option value="">Pilih Nama ULTG</option>
-                                                    @foreach ($ultgs as $ultg)
-                                                        <option value="{{ $ultg->id }}"
-                                                            {{ old('ultg_id', $ultg_id) == $ultg->id ? 'selected' : '' }}>
-                                                            {{ $ultg->nama_ultg }}
-                                                        </option>
-                                                    @endforeach
-                                                </select>
-                                            </div>
-
-                                            <div class="col-md-3">
-                                                <label for="nama_lokasikerja">Nama Lokasi Kerja</label>
-                                                <select class="form-control" id="nama_lokasikerja" name="lokasikerja_id">
-                                                    <option value="">Pilih Nama Lokasi Kerja</option>
-                                                    @foreach ($lokasikerjas as $lokasi)
-                                                        <option value="{{ $lokasi->id }}"
-                                                            {{ old('lokasikerja_id', $lokasikerja_id) == $lokasi->id ? 'selected' : '' }}>
-                                                            {{ $lokasi->nama_lokasikerja }}
-                                                        </option>
-                                                    @endforeach
-                                                </select>
-                                            </div>
-
-                                            <div class="col-md-3">
-                                                <label for="tanggal">Tahun - Bulan</label>
-                                                <input type="month" class="form-control" id="tanggal" name="tanggal"
-                                                    value="{{ old('tanggal', $tanggal ?? date('Y-m')) }}">
-                                            </div>
+                        <div class="card">
+                            <div class="card-header bg-light">
+                                <strong>Select Data</strong>
+                            </div>
+                            <div class="card-body">
+                                <form method="GET" action="">
+                                    <div class="row">
+                                        <div class="col-md-3">
+                                            <label for="nama_upt">Nama UPT</label>
+                                            <select class="form-control" id="nama_upt" name="upt_id">
+                                                <option value="">Pilih Nama UPT</option>
+                                                @foreach ($allUptNames as $item)
+                                                    <option value="{{ $item->id }}"
+                                                        {{ old('upt_id', $upt_id) == $item->id ? 'selected' : '' }}>
+                                                        {{ $item->nama_upt }}
+                                                    </option>
+                                                @endforeach
+                                            </select>
                                         </div>
-                                        <div class="mt-3">
-                                            <button type="submit" class="btn btn-primary">View</button>
+
+                                        <div class="col-md-3">
+                                            <label for="nama_ultg">Nama ULTG</label>
+                                            <select class="form-control" id="nama_ultg" name="ultg_id">
+                                                <option value="">Pilih Nama ULTG</option>
+                                                @foreach ($ultgs as $ultg)
+                                                    <option value="{{ $ultg->id }}"
+                                                        {{ old('ultg_id', $ultg_id) == $ultg->id ? 'selected' : '' }}>
+                                                        {{ $ultg->nama_ultg }}
+                                                    </option>
+                                                @endforeach
+                                            </select>
                                         </div>
-                                    </form>
-                                </div>
+
+                                        <div class="col-md-3">
+                                            <label for="nama_lokasikerja">Nama Lokasi Kerja</label>
+                                            <select class="form-control" id="nama_lokasikerja" name="lokasikerja_id">
+                                                <option value="">Pilih Nama Lokasi Kerja</option>
+                                                @foreach ($lokasikerjas as $lokasi)
+                                                    <option value="{{ $lokasi->id }}"
+                                                        {{ old('lokasikerja_id', $lokasikerja_id) == $lokasi->id ? 'selected' : '' }}>
+                                                        {{ $lokasi->nama_lokasikerja }}
+                                                    </option>
+                                                @endforeach
+                                            </select>
+                                        </div>
+
+                                        <div class="col-md-3">
+                                            <label for="tanggal">Tahun - Bulan</label>
+                                            <input type="month" class="form-control" id="tanggal" name="tanggal"
+                                                value="{{ old('tanggal', $tanggal ?? date('Y-m')) }}">
+                                        </div>
+                                    </div>
+                                    <div class="mt-3">
+                                        <button type="submit" class="btn btn-primary">View</button>
+                                    </div>
+                                </form>
                             </div>
                         </div>
                     </div>
@@ -179,6 +177,57 @@
                             <div class="alert alert-warning mt-4">Data tidak ditemukan untuk filter yang dipilih.</div>
                         @endif
                     </div>
+                    <div class="card mb-4">
+                        <div class="card-header">
+                            <h4 class="card-title">Ringkasan Laporan Bulanan</h4>
+                        </div>
+                        <div class="card-body">
+                            <div class="table-responsive">
+                                <table class="table table-bordered">
+                                    <thead>
+                                        <tr>
+                                            <th>No</th>
+                                            <th>Periode</th>
+                                            <th>UPT</th>
+                                            <th>ULTG</th>
+                                            <th>Lokasi Kerja</th>
+                                            <th>Status Validasi</th>
+                                            <th>Aksi</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        @foreach($ringkasanLaporan as $index => $item)
+                                        <tr>
+                                            <td>{{ $index + 1 }}</td>
+                                            <td>{{ \Carbon\Carbon::parse($item->periode)->format('F Y') }}</td>
+                                            <td>{{ optional($item->upt)->nama_upt }}</td>
+                                            <td>{{ optional($item->ultg)->nama_ultg }}</td>
+                                            <td>{{ optional($item->lokasikerja)->nama_lokasikerja }}</td>
+                                            <td>
+                                                @if($item->is_validated)
+                                                    <span class="badge badge-success">Sudah Divalidasi</span>
+                                                @else
+                                                    <span class="badge badge-warning">Belum Divalidasi</span>
+                                                @endif
+                                            </td>
+                                            <td>
+                                                <a href="{{ route('laporan.index', [
+                                                    'upt_id' => $item->upt_id,
+                                                    'ultg_id' => $item->ultg_id,
+                                                    'lokasikerja_id' => $item->lokasikerja_id,
+                                                    'tanggal' => \Carbon\Carbon::parse($item->periode)->format('Y-m')
+                                                ]) }}" class="btn btn-sm btn-info">
+                                                    <i class="fa fa-eye"></i> Detail
+                                                </a>
+                                            </td>
+                                        </tr>
+                                        @endforeach
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+
                 </div>
             </div>
         </div>
@@ -241,4 +290,6 @@
             }
         });
     </script>
+
+    
 @endsection
