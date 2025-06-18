@@ -159,7 +159,7 @@
                                 <th>Lokasi Masuk (Lat, Long)</th>
                                 <th>Lokasi Keluar (Lat, Long)</th>
                                 <th>Status</th>
-                                <th>Keterangan</th>
+                                <!-- <th>Keterangan</th> -->
                             </tr>
                         </thead>
                         <tbody>
@@ -178,7 +178,7 @@
                                 <td>{{ $row->latitude_masuk ?? '-' }}, {{ $row->longitude_masuk ?? '-' }}</td>
                                 <td>{{ $row->latitude_keluar ?? '-' }}, {{ $row->longitude_keluar ?? '-' }}</td>
                                 <td>{{ ucfirst($row->status) }}</td>
-                                <td>{{ $row->keterangan ?? '-' }}</td>
+                                <!-- <td>{{ $row->keterangan ?? '-' }}</td> -->
                             </tr>
                             @empty
                             <tr>
