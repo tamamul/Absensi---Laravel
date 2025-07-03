@@ -8,6 +8,9 @@ use App\Models\Upt;
 use App\Models\Ultg;
 use App\Models\Lokasikerja;
 use App\Models\Jadwalsatpam;
+use Maatwebsite\Excel\Facades\Excel;
+use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Facades\DB;
 
 class JadwalsatpamController extends Controller
 {
@@ -270,5 +273,69 @@ class JadwalsatpamController extends Controller
         // Pluck: key = id, value = nama_lokasikerja
         $lokasikerjas = Lokasikerja::where('ultg_id', $ultgId)->pluck('nama_lokasikerja', 'id');
         return response()->json($lokasikerjas);
+    }
+
+    public function importExcel(Request $request)
+    {
+        $request->validate([
+            'file_excel' => 'required|file|mimes:xlsx,xls',
+        ]);
+        try {
+            $file = $request->file('file_excel');
+            $data = \PhpOffice\PhpSpreadsheet\IOFactory::load($file->getPathname())
+                ->getActiveSheet()
+                ->toArray(null, true, true, true);
+            $header = array_map('strtolower', $data[1]);
+            unset($data[1]);
+            DB::beginTransaction();
+            foreach ($data as $row) {
+                $rowData = array_combine($header, $row);
+                // Mapping nama ke id
+                $satpam = \App\Models\Datasatpam::where('nama', $rowData['nama_satpam'] ?? '')->first();
+                $lokasi = \App\Models\Lokasikerja::where('nama_lokasikerja', $rowData['nama_lokasikerja'] ?? '')->first();
+                $upt = \App\Models\Upt::where('nama_upt', $rowData['nama_upt'] ?? '')->first();
+                $ultg = \App\Models\Ultg::where('nama_ultg', $rowData['nama_ultg'] ?? '')->first();
+                if (!$satpam || !$lokasi || !$upt || !$ultg) continue;
+                \App\Models\Jadwalsatpam::updateOrCreate([
+                    'satpam_id' => $satpam->id,
+                    'tanggal' => $rowData['tanggal'],
+                    'shift' => $rowData['shift'],
+                ], []);
+            }
+            DB::commit();
+            return redirect()->route('jadwalsatpam.index')->with('success', 'Import Excel berhasil!');
+        } catch (\Exception $e) {
+            DB::rollBack();
+            Log::error('Import Excel Jadwal Error', ['error' => $e->getMessage()]);
+            return redirect()->back()->with('error', 'Import Excel gagal: ' . $e->getMessage());
+        }
+    }
+
+    public function downloadSampleExcel()
+    {
+        $spreadsheet = new \PhpOffice\PhpSpreadsheet\Spreadsheet();
+        $sheet = $spreadsheet->getActiveSheet();
+        $sheet->fromArray([
+            ['tanggal', 'shift', 'nama_satpam', 'nama_lokasikerja', 'nama_upt', 'nama_ultg'],
+            // GI 150KV LAWANG
+            ['2025-07-10', 'P', 'MISBACHUL HUDA', 'GI 150KV LAWANG', 'malangg', 'malangsa'],
+            ['2025-07-10', 'S', 'dsf', 'GI 150KV LAWANG', 'malangg', 'malangsa'],
+            ['2025-07-11', 'P', 'MISBACHUL HUDA', 'GI 150KV LAWANG', 'malangg', 'malangsa'],
+            ['2025-07-11', 'S', 'dsf', 'GI 150KV LAWANG', 'malangg', 'malangsa'],
+            ['2025-07-12', 'P', 'MISBACHUL HUDA', 'GI 150KV LAWANG', 'malangg', 'malangsa'],
+            ['2025-07-12', 'S', 'dsf', 'GI 150KV LAWANG', 'malangg', 'malangsa'],
+            // GI GULUK-GULUK
+            ['2025-07-10', 'P', 'frankie steinlie', 'GI GULUK-GULUK', 'gresikk', 'sampangsa'],
+            ['2025-07-10', 'S', 'frankie steinlie', 'GI GULUK-GULUK', 'gresikk', 'sampangsa'],
+            ['2025-07-11', 'P', 'frankie steinlie', 'GI GULUK-GULUK', 'gresikk', 'sampangsa'],
+            ['2025-07-11', 'S', 'frankie steinlie', 'GI GULUK-GULUK', 'gresikk', 'sampangsa'],
+            ['2025-07-12', 'P', 'frankie steinlie', 'GI GULUK-GULUK', 'gresikk', 'sampangsa'],
+            ['2025-07-12', 'S', 'frankie steinlie', 'GI GULUK-GULUK', 'gresikk', 'sampangsa'],
+        ]);
+        $writer = new \PhpOffice\PhpSpreadsheet\Writer\Xlsx($spreadsheet);
+        $filename = 'sample_jadwal_satpam.xlsx';
+        $tmpFile = tempnam(sys_get_temp_dir(), $filename);
+        $writer->save($tmpFile);
+        return response()->download($tmpFile, $filename)->deleteFileAfterSend(true);
     }
 }

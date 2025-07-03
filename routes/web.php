@@ -213,3 +213,7 @@ Route::get('/form', function () {
 Route::get('/tabel', function () {
     return view('tabel');
 })->name('tabel');
+
+Route::post('/jadwalsatpam/import-excel', [App\Http\Controllers\JadwalsatpamController::class, 'importExcel'])->name('jadwalsatpam.importExcel');
+
+Route::get('/sample_jadwal_satpam.xlsx', [App\Http\Controllers\JadwalsatpamController::class, 'downloadSampleExcel']);

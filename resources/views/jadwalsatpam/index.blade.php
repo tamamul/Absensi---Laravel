@@ -19,6 +19,9 @@
                             <div class="fa fa-plus-circle"></div>
                             <span class="d-none d-lg-block" style="float: right;  margin-left:3px;"> Tambah Data</span>
                         </a>
+                        <a href="#" class="btn btn-info" data-toggle="modal" data-target="#modalUploadExcel">
+                            <i class="fa fa-upload"></i> Upload Excel Jadwal
+                        </a>
                     </div>
                     <div class="card-header">
                         <div class="container">
@@ -187,4 +190,33 @@
                 }
             });
         </script>
-    @endsection
+    </div>
+
+    <!-- Modal Upload Excel -->
+    <div class="modal fade" id="modalUploadExcel" tabindex="-1" role="dialog" aria-labelledby="modalUploadExcelLabel" aria-hidden="true">
+        <div class="modal-dialog" role="document">
+            <form action="{{ route('jadwalsatpam.importExcel') }}" method="POST" enctype="multipart/form-data">
+                @csrf
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title" id="modalUploadExcelLabel">Upload Excel Jadwal Satpam</h5>
+                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                            <span aria-hidden="true">&times;</span>
+                        </button>
+                    </div>
+                    <div class="modal-body">
+                        <div class="form-group">
+                            <label for="file_excel">Pilih File Excel (.xlsx)</label>
+                            <input type="file" class="form-control" name="file_excel" accept=".xlsx,.xls" required>
+                            <small>Download contoh file: <a href="/sample_jadwal_satpam.xlsx" target="_blank">sample_jadwal_satpam.xlsx</a></small>
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-dismiss="modal">Batal</button>
+                        <button type="submit" class="btn btn-success">Upload & Import</button>
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>
+@endsection
