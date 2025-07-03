@@ -8,6 +8,7 @@ use App\Models\Upt;
 use Illuminate\Http\Request;
 use App\Models\Datasatpam;
 use Illuminate\Support\Facades\Storage;
+use Carbon\Carbon;
 
 class DatasatpamController extends Controller
 {
@@ -20,273 +21,235 @@ class DatasatpamController extends Controller
                 if ($item->foto && Storage::disk('public')->exists($item->foto)) {
                     $item->foto_url = asset('storage/' . $item->foto);
                 } else {
-                    $item->foto_url = asset('storage/foto_satpam/default_avatar.jpg.avif');
+                    $item->foto_url = asset('storage/foto_satpam/default_avatar.jpg');
                 }
                 return $item;
             });
         return view('datasatpam.index', ['dataDatasatpam' => $data]);
     }
+
     public function create()
     {
-        $allUptNames = Upt::all();    // Ambil semua UPT
-        $allUltgNames = Ultg::all();  // Ambil semua ULTG
-        $allLokasikerjaNames = Lokasikerja::all(); // Ambil semua Lokasi Kerja
-        $newID = 'SAT' . str_pad(rand(1, 9999), 4, '0', STR_PAD_LEFT);
+        $allUptNames = Upt::all();
+        $allUltgNames = Ultg::all();
+        $allLokasikerjaNames = Lokasikerja::all();
+
+        // Generate kode satpam
+        $lastData = Datasatpam::orderBy('id', 'desc')->first();
+        $lastNumber = $lastData ? intval(substr($lastData->kode_satpam, -3)) : 0;
+        $newNumber = str_pad($lastNumber + 1, 3, '0', STR_PAD_LEFT);
+        $newID = 'STPM' . $newNumber;
 
         return view('datasatpam.create', compact('allUptNames', 'allUltgNames', 'allLokasikerjaNames', 'newID'));
     }
+
     public function store(Request $request)
     {
-        $validated = $request->validate([
-            'kode_satpam' => 'required|unique:datasatpam,kode_satpam',
-            'nip' => 'required|string|max:50',
-            'nik' => 'required|string|max:50',
-            'nama' => 'required|string|max:255',
-            'status' => 'required|string',
-            'no_pkwt_pkwtt' => 'required|string|max:100',
-            'kontrak' => 'nullable|string|max:100',
-            'terhitung_mulai_tugas' => 'required|date',
-            'jabatan' => 'required|string|max:100',
-            // 'upt_id' => 'required|exists:upt,id',
-            // 'ultg_id' => 'required|exists:ultg,id',
-            'lokasikerja_id' => 'required|exists:lokasikerja,id',
-            'wilayah_kerja' => 'nullable|string|max:255',
-            'jenis_kelamin' => 'required|string',
-            'tempat_lahir' => 'required|string|max:100',
-            'tanggal_lahir' => 'required|date',
-            'usia' => 'nullable|integer',
-            'warga_negara' => 'required|string|in:WNI,WNA',
-            'agama' => 'required|string',
-            'no_hp' => 'required|string|max:20',
-            'email' => 'nullable|email|max:100',
-            'alamat' => 'nullable|string',
-            'kelurahan' => 'nullable|string|max:100',
-            'kecamatan' => 'nullable|string|max:100',
-            'kabupaten' => 'nullable|string|max:100',
-            'provinsi' => 'nullable|string|max:100',
-            'negara' => 'nullable|string|max:100',
-            'nama_ibu' => 'nullable|string|max:100',
-            'no_kontak_darurat' => 'nullable|string|max:20',
-            'nama_kontak_darurat' => 'nullable|string|max:100',
-            'nama_ahli_waris' => 'nullable|string|max:100',
-            'tempat_lahir_ahli_waris' => 'nullable|string|max:100',
-            'tanggal_lahir_ahli_waris' => 'nullable|date',
-            'hub_ahli_waris' => 'nullable|string|max:100',
-            'status_nikah' => 'nullable|string|max:10',
-            'jumlah_anak' => 'nullable|integer',
-            'npwp' => 'nullable|string|max:30',
-            'nama_bank' => 'nullable|string|max:100',
-            'no_rek' => 'nullable|string|max:50',
-            'nama_pemilik_rek' => 'nullable|string|max:100',
-            'no_dplk' => 'nullable|string|max:50',
-            'pend_terakhir' => 'nullable|string|max:100',
-            'sertifikasi_satpam' => 'nullable|string|max:50',
-            'no_reg_kta' => 'nullable|string|max:50',
-            'no_kta' => 'nullable|string|max:50',
-            'polda' => 'nullable|string|max:100',
-            'polres' => 'nullable|string|max:100',
-            'no_bpjs_kesehatan' => 'nullable|string|max:50',
-            'no_bpjs_ketenagakerjaan' => 'nullable|string|max:50',
-            'ukuran_baju' => 'nullable|string|max:10',
-            'ukuran_celana' => 'nullable|integer',
-            'ukuran_sepatu' => 'nullable|integer',
-            'ukuran_topi' => 'nullable|integer',
-            'foto' => 'nullable|image|max:2048',
-        ]);
+        \Log::info('Proses tambah satpam dimulai', ['input' => $request->all()]);
+        \Log::info('Request POST store', $request->all());
+        try {
+            $request->validate([
+                'kode_satpam' => 'required|unique:datasatpam,kode_satpam',
+                'nip' => 'required|unique:datasatpam,nip',
+                'nik' => 'required|unique:datasatpam,nik',
+                'foto' => 'nullable|image|mimes:jpeg,png,jpg|max:2048',
+                'nama' => 'required|string',
+                'status' => 'required|in:PKWT,PKWTT',
+                'no_pkwt_pkwtt' => 'required|unique:datasatpam,no_pkwt_pkwtt',
+                'kontrak' => 'nullable|string',
+                'terhitung_mulai_tugas' => 'required|date',
+                'jabatan' => 'required|in:Komandan Regu,Anggota',
+                'lokasikerja_id' => 'required|exists:lokasikerja,id',
+                'wilayah_kerja' => 'nullable|string',
+                'jenis_kelamin' => 'required|in:Laki-laki,Perempuan',
+                'tempat_lahir' => 'required|string',
+                'tanggal_lahir' => 'required|date',
+                'warga_negara' => 'required|in:WNI,WNA',
+                'agama' => 'required|string',
+                'no_hp' => 'required|string',
+                'email' => 'nullable|email',
+                'alamat' => 'required|string',
+                'kelurahan' => 'nullable|string',
+                'kecamatan' => 'nullable|string',
+                'kabupaten' => 'nullable|string',
+                'provinsi' => 'nullable|string',
+                'negara' => 'nullable|string',
+                'nama_ibu' => 'nullable|string',
+                'no_kontak_darurat' => 'nullable|string',
+                'nama_kontak_darurat' => 'nullable|string',
+                'nama_ahli_waris' => 'nullable|string',
+                'tempat_lahir_ahli_waris' => 'nullable|string',
+                'tanggal_lahir_ahli_waris' => 'nullable|date',
+                'hub_ahli_waris' => 'nullable|string',
+                'status_nikah' => 'nullable|in:TK,K,K1,K2,K3,K4',
+                'jumlah_anak' => 'nullable|integer',
+                'npwp' => 'nullable|string',
+                'nama_bank' => 'nullable|string',
+                'no_rek' => 'nullable|unique:datasatpam,no_rek',
+                'nama_pemilik_rek' => 'nullable|string',
+                'no_dplk' => 'nullable|unique:datasatpam,no_dplk',
+                'pend_terakhir' => 'nullable|string',
+                'sertifikasi_satpam' => 'required|in:Gada Pratama,Gada Madya,Gada Utama',
+                'no_reg_kta' => 'nullable|unique:datasatpam,no_reg_kta',
+                'no_kta' => 'nullable|unique:datasatpam,no_kta',
+                'polda' => 'nullable|string',
+                'polres' => 'nullable|string',
+                'no_bpjs_kesehatan' => 'nullable|unique:datasatpam,no_bpjs_kesehatan',
+                'no_bpjs_ketenagakerjaan' => 'nullable|unique:datasatpam,no_bpjs_ketenagakerjaan',
+                'ukuran_baju' => 'nullable|in:S,M,L,XL,XXL',
+                'ukuran_celana' => 'nullable|integer',
+                'ukuran_sepatu' => 'nullable|integer',
+                'ukuran_topi' => 'nullable|integer',
+            ]);
+            \Log::info('Validasi tambah satpam sukses');
+            $data = new Datasatpam($request->all());
+            $data->ukuran_sepatu = $request->filled('ukuran_sepatu') ? $request->input('ukuran_sepatu') : 0;
+            $data->warga_negara = $request->input('warga_negara');
+            
+            // Set default pekerjaan
+            $data->pekerjaan = 'Satpam';
 
-        $data = new \App\Models\Datasatpam($validated);
+            // Hitung usia
+            if ($request->tanggal_lahir) {
+                $data->usia = Carbon::parse($request->tanggal_lahir)->age;
+            }
 
-        // Handle foto upload
-        if ($request->hasFile('foto')) {
-            $foto = $request->file('foto');
-            $filename = time() . '_' . uniqid() . '.' . $foto->getClientOriginalExtension();
+            // Handle foto upload
+            if ($request->hasFile('foto')) {
+                $foto = $request->file('foto');
+                $filename = time() . '_' . $request->kode_satpam . '.' . $foto->getClientOriginalExtension();
+                $path = $foto->storeAs('foto_satpam', $filename, 'public');
+                $data->foto = $path;
+            }
 
-            // Simpan ke storage/app/public/foto_satpam
-            $path = $foto->storeAs('foto_satpam', $filename, 'public');
-
-            // Simpan hanya path relatif di database: 'foto_satpam/filename.jpg'
-            $data->foto = $path;
+            $data->save();
+            \Log::info('Data satpam berhasil disimpan', ['id' => $data->id]);
+            return redirect()->route('datasatpam.index')
+                ->with('success', 'Data satpam berhasil ditambahkan');
+        } catch (\Exception $e) {
+            \Log::error('Tambah satpam gagal', ['error' => $e->getMessage(), 'trace' => $e->getTraceAsString()]);
+            return redirect()->back()->with('error', 'Gagal tambah data: ' . $e->getMessage());
         }
-
-        $data->save();
-
-        return redirect()->route('datasatpam.index')->with('success', 'Data Satpam berhasil ditambahkan!');
     }
+
     public function edit($id)
     {
         $data = Datasatpam::with(['lokasikerja.ultg.upt'])->findOrFail($id);
         $allUptNames = Upt::all();
-
-        // Ambil ULTG berdasarkan UPT yang terkait dengan lokasi kerja
-        $allUltgNames = collect();
-        if ($data->lokasikerja && $data->lokasikerja->ultg && $data->lokasikerja->ultg->upt) {
-            $allUltgNames = Ultg::where('upt_id', $data->lokasikerja->ultg->upt->id)->get();
-        }
-
-        // Ambil lokasi kerja berdasarkan ULTG yang terkait
-        $allLokasikerjaNames = collect();
-        if ($data->lokasikerja && $data->lokasikerja->ultg) {
-            $allLokasikerjaNames = Lokasikerja::where('ultg_id', $data->lokasikerja->ultg->id)->get();
-        }
-        // dd($allLokasikerjaNames);
+        $allUltgNames = Ultg::all();
+        $allLokasikerjaNames = Lokasikerja::all();
 
         return view('datasatpam.edit', compact('data', 'allUptNames', 'allUltgNames', 'allLokasikerjaNames'));
     }
 
-    public function detail($id)
-    {
-        $datasatpam = Datasatpam::findOrFail($id);
-        return view('datasatpam.detail', compact('datasatpam'));
-    }
-
     public function update(Request $request, $id)
     {
-        $request->validate([
-            'nip' => 'required|string|max:50',
-            'nik' => 'required|string|max:50',
-            'foto' => 'nullable|image|mimes:jpeg,png,jpg|max:2048',
-            'nama' => 'required|string|max:255',
-            'status' => 'required|string',
-            'no_pkwt_pkwtt' => 'nullable|string|max:100',
-            'kontrak' => 'nullable|string|max:100',
-            'terhitung_mulai_tugas' => 'nullable|date',
-            'jabatan' => 'required|string|max:100',
-            'lokasikerja_id' => 'required|exists:lokasikerja,id',
-            'wilayah_kerja' => 'nullable|string|max:255',
-            'jenis_kelamin' => 'required|string',
-            'tempat_lahir' => 'nullable|string|max:100',
-            'tanggal_lahir' => 'nullable|date',
-            'usia' => 'nullable|integer',
-            'warga_negara' => 'required|string|in:WNI,WNA',
-            'agama' => 'nullable|string',
-            'no_hp' => 'required|string|max:20',
-            'email' => 'nullable|email|max:100',
-            'alamat' => 'required|string',
-            'kelurahan' => 'nullable|string|max:100',
-            'kecamatan' => 'nullable|string|max:100',
-            'kabupaten' => 'nullable|string|max:100',
-            'provinsi' => 'nullable|string|max:100',
-            'negara' => 'nullable|string|max:100',
-            'nama_ibu' => 'nullable|string|max:100',
-            'no_kontak_darurat' => 'nullable|string|max:20',
-            'nama_kontak_darurat' => 'nullable|string|max:100',
-            'nama_ahli_waris' => 'nullable|string|max:100',
-            'tempat_lahir_ahli_waris' => 'nullable|string|max:100',
-            'tanggal_lahir_ahli_waris' => 'nullable|date',
-            'hub_ahli_waris' => 'nullable|string|max:100',
-            'status_nikah' => 'nullable|string|max:10',
-            'jumlah_anak' => 'nullable|integer',
-            'npwp' => 'nullable|string|max:30',
-            'nama_bank' => 'nullable|string|max:100',
-            'no_rek' => 'nullable|string|max:50',
-            'nama_pemilik_rek' => 'nullable|string|max:100',
-            'no_dplk' => 'nullable|string|max:50',
-            'pend_terakhir' => 'nullable|string|max:100',
-            'sertifikasi_satpam' => 'nullable|string|max:50',
-            'no_reg_kta' => 'nullable|string|max:50',
-            'no_kta' => 'nullable|string|max:50',
-            'polda' => 'nullable|string|max:100',
-            'polres' => 'nullable|string|max:100',
-            'no_bpjs_kesehatan' => 'nullable|string|max:50',
-            'no_bpjs_ketenagakerjaan' => 'nullable|string|max:50',
-            'ukuran_baju' => 'nullable|string|max:10',
-            'ukuran_celana' => 'nullable|integer',
-            'ukuran_sepatu' => 'nullable|integer',
-            'ukuran_topi' => 'nullable|integer',
-        ]);
-
-        $data = Datasatpam::findOrFail($id);
-
-        // Handle foto upload
-        if ($request->hasFile('foto')) {
-            // Hapus foto lama jika ada
-            if ($data->foto && Storage::disk('public')->exists($data->foto)) {
-                Storage::disk('public')->delete($data->foto);
+        \Log::info('Proses update satpam dimulai', ['id' => $id, 'input' => $request->all()]);
+        \Log::info('Request POST update', $request->all());
+        try {
+            $datasatpam = Datasatpam::findOrFail($id);
+            $request->validate([
+                'nip' => 'required|unique:datasatpam,nip,' . $id . ',id',
+                'nik' => 'required|unique:datasatpam,nik,' . $id . ',id',
+                'foto' => 'nullable|image|mimes:jpeg,png,jpg|max:2048',
+                'nama' => 'required|string',
+                'status' => 'required|in:PKWT,PKWTT',
+                'no_pkwt_pkwtt' => 'required|unique:datasatpam,no_pkwt_pkwtt,' . $id . ',id',
+                'kontrak' => 'nullable|string',
+                'terhitung_mulai_tugas' => 'required|date',
+                'jabatan' => 'required|in:Komandan Regu,Anggota',
+                'lokasikerja_id' => 'required|exists:lokasikerja,id',
+                'wilayah_kerja' => 'nullable|string',
+                'jenis_kelamin' => 'required|in:Laki-laki,Perempuan',
+                'tempat_lahir' => 'required|string',
+                'tanggal_lahir' => 'required|date',
+                'warga_negara' => 'required|in:WNI,WNA',
+                'agama' => 'required|string',
+                'no_hp' => 'required|string',
+                'email' => 'nullable|email',
+                'alamat' => 'required|string',
+                'kelurahan' => 'nullable|string',
+                'kecamatan' => 'nullable|string',
+                'kabupaten' => 'nullable|string',
+                'provinsi' => 'nullable|string',
+                'negara' => 'nullable|string',
+                'nama_ibu' => 'nullable|string',
+                'no_kontak_darurat' => 'nullable|string',
+                'nama_kontak_darurat' => 'nullable|string',
+                'nama_ahli_waris' => 'nullable|string',
+                'tempat_lahir_ahli_waris' => 'nullable|string',
+                'tanggal_lahir_ahli_waris' => 'nullable|date',
+                'hub_ahli_waris' => 'nullable|string',
+                'status_nikah' => 'nullable|in:TK,K,K1,K2,K3,K4',
+                'jumlah_anak' => 'nullable|integer',
+                'npwp' => 'nullable|string',
+                'nama_bank' => 'nullable|string',
+                'no_rek' => 'nullable|unique:datasatpam,no_rek,' . $id . ',id',
+                'nama_pemilik_rek' => 'nullable|string',
+                'no_dplk' => 'nullable|unique:datasatpam,no_dplk,' . $id . ',id',
+                'pend_terakhir' => 'nullable|string',
+                'sertifikasi_satpam' => 'required|in:Gada Pratama,Gada Madya,Gada Utama',
+                'no_reg_kta' => 'nullable|unique:datasatpam,no_reg_kta,' . $id . ',id',
+                'no_kta' => 'nullable|unique:datasatpam,no_kta,' . $id . ',id',
+                'polda' => 'nullable|string',
+                'polres' => 'nullable|string',
+                'no_bpjs_kesehatan' => 'nullable|unique:datasatpam,no_bpjs_kesehatan,' . $id . ',id',
+                'no_bpjs_ketenagakerjaan' => 'nullable|unique:datasatpam,no_bpjs_ketenagakerjaan,' . $id . ',id',
+                'ukuran_baju' => 'nullable|in:S,M,L,XL,XXL',
+                'ukuran_celana' => 'nullable|integer',
+                'ukuran_sepatu' => 'nullable|integer',
+                'ukuran_topi' => 'nullable|integer',
+            ]);
+            $data = $request->all();
+            $data['ukuran_sepatu'] = $request->filled('ukuran_sepatu') ? $request->input('ukuran_sepatu') : 0;
+            $data['warga_negara'] = $request->input('warga_negara');
+            $data['pekerjaan'] = 'Satpam';
+            if ($request->tanggal_lahir) {
+                $data['usia'] = Carbon::parse($request->tanggal_lahir)->age;
             }
-            
-            $foto = $request->file('foto');
-            $filename = time() . '_' . $data->kode_satpam . '.' . $foto->getClientOriginalExtension();
-            $path = $foto->storeAs('foto_satpam', $filename, 'public');
-            $data->foto = $path;
+            if ($request->hasFile('foto')) {
+                if ($datasatpam->foto) {
+                    Storage::delete('public/' . $datasatpam->foto);
+                }
+                $foto = $request->file('foto');
+                $filename = time() . '_' . $datasatpam->kode_satpam . '.' . $foto->getClientOriginalExtension();
+                $path = $foto->storeAs('foto_satpam', $filename, 'public');
+                $data['foto'] = $path;
+            }
+            $datasatpam->update($data);
+            \Log::info('Update satpam berhasil', ['id' => $id]);
+            return redirect()->route('datasatpam.index')
+                ->with('success', 'Data satpam berhasil diperbarui');
+        } catch (\Exception $e) {
+            \Log::error('Update satpam gagal', ['id' => $id, 'error' => $e->getMessage(), 'trace' => $e->getTraceAsString()]);
+            return redirect()->back()->with('error', 'Gagal update data: ' . $e->getMessage());
         }
-
-        // Update semua field
-        $data->nip = $request->nip;
-        $data->nik = $request->nik;
-        $data->nama = $request->nama;
-        $data->pekerjaan = 'Satpam';
-        $data->status = $request->status;
-        $data->no_pkwt_pkwtt = $request->no_pkwt_pkwtt;
-        $data->kontrak = $request->kontrak;
-        $data->terhitung_mulai_tugas = $request->terhitung_mulai_tugas;
-        $data->jabatan = $request->jabatan;
-        $data->lokasikerja_id = $request->lokasikerja_id;
-        $data->wilayah_kerja = $request->wilayah_kerja;
-        $data->jenis_kelamin = $request->jenis_kelamin;
-        $data->tempat_lahir = $request->tempat_lahir;
-        $data->tanggal_lahir = $request->tanggal_lahir;
-        $data->usia = $request->usia;
-        $data->warga_negara = $request->warga_negara;
-        $data->agama = $request->agama;
-        $data->no_hp = $request->no_hp;
-        $data->email = $request->email;
-        $data->alamat = $request->alamat;
-        $data->kelurahan = $request->kelurahan;
-        $data->kecamatan = $request->kecamatan;
-        $data->kabupaten = $request->kabupaten;
-        $data->provinsi = $request->provinsi;
-        $data->negara = $request->negara;
-        $data->nama_ibu = $request->nama_ibu;
-        $data->no_kontak_darurat = $request->no_kontak_darurat;
-        $data->nama_kontak_darurat = $request->nama_kontak_darurat;
-        $data->nama_ahli_waris = $request->nama_ahli_waris;
-        $data->tempat_lahir_ahli_waris = $request->tempat_lahir_ahli_waris;
-        $data->tanggal_lahir_ahli_waris = $request->tanggal_lahir_ahli_waris;
-        $data->hub_ahli_waris = $request->hub_ahli_waris;
-        $data->status_nikah = $request->status_nikah;
-        $data->jumlah_anak = $request->jumlah_anak;
-        $data->npwp = $request->npwp;
-        $data->nama_bank = $request->nama_bank;
-        $data->no_rek = $request->no_rek;
-        $data->nama_pemilik_rek = $request->nama_pemilik_rek;
-        $data->no_dplk = $request->no_dplk;
-        $data->pend_terakhir = $request->pend_terakhir;
-        $data->sertifikasi_satpam = $request->sertifikasi_satpam;
-        $data->no_reg_kta = $request->no_reg_kta;
-        $data->no_kta = $request->no_kta;
-        $data->polda = $request->polda;
-        $data->polres = $request->polres;
-        $data->no_bpjs_kesehatan = $request->no_bpjs_kesehatan;
-        $data->no_bpjs_ketenagakerjaan = $request->no_bpjs_ketenagakerjaan;
-        $data->ukuran_baju = $request->ukuran_baju;
-        $data->ukuran_celana = $request->ukuran_celana;
-        $data->ukuran_sepatu = $request->ukuran_sepatu;
-        $data->ukuran_topi = $request->ukuran_topi;
-
-        $data->save();
-
-        return redirect()->route('datasatpam.index')->with('success', 'Data berhasil diupdate');
     }
 
     public function destroy($id)
     {
-        $data = Datasatpam::findOrFail($id);
-        if ($data->foto) {
-            Storage::delete('public/' . $data->foto);
+        $datasatpam = Datasatpam::findOrFail($id);
+        
+        // Delete photo if exists
+        if ($datasatpam->foto) {
+            Storage::delete('public/' . $datasatpam->foto);
         }
-        $data->delete();
-        return redirect()->route('datasatpam.index')->with('success', 'Data berhasil dihapus');
+        
+        $datasatpam->delete();
+
+        return redirect()->route('datasatpam.index')
+            ->with('success', 'Data satpam berhasil dihapus');
     }
-    public function getUltg($upt_id)
+
+    public function getUltg($uptId)
     {
-        $ultgs = Ultg::where('upt_id', $upt_id)->pluck('nama_ultg', 'id');
+        $ultgs = Ultg::where('upt_id', $uptId)->pluck('nama_ultg', 'id');
         return response()->json($ultgs);
     }
 
-    public function getLokasiKerja($ultg_id)
+    public function getLokasi($ultgId)
     {
-        $lokasiKerjas = Lokasikerja::where('ultg_id', $ultg_id)->pluck('nama_lokasi', 'id');
+        $lokasiKerjas = \App\Models\Lokasikerja::where('ultg_id', $ultgId)->pluck('nama_lokasikerja', 'id');
         return response()->json($lokasiKerjas);
     }
-
 }
