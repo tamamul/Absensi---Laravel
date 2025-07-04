@@ -56,6 +56,18 @@
                         </a>
                     </li>
                     <li class="nav-item">
+                        <a href="{{ route('pengajuan.index') }}">
+                            <i class="fas fa-clipboard-list"></i>
+                            <span>Pengajuan</span>
+                            @php
+                                $pendingCount = \App\Models\Pengajuan::where('status', 'pending')->count();
+                            @endphp
+                            @if($pendingCount > 0)
+                                <span class="badge badge-warning ml-auto">{{ $pendingCount }}</span>
+                            @endif
+                        </a>
+                    </li>
+                    <li class="nav-item">
                         <a href="/laporan">
                             <i class="fas fa-file-alt"></i>
                             <span>Laporan</span>

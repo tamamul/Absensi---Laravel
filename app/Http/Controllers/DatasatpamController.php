@@ -49,7 +49,7 @@ class DatasatpamController extends Controller
         \Log::info('Request POST store', $request->all());
         try {
             $request->validate([
-                'kode_satpam' => 'required|unique:datasatpam,kode_satpam',
+            'kode_satpam' => 'required|unique:datasatpam,kode_satpam',
                 'nip' => 'required|unique:datasatpam,nip',
                 'nik' => 'required|unique:datasatpam,nik',
                 'foto' => 'nullable|image|mimes:jpeg,png,jpg|max:2048',
@@ -57,15 +57,15 @@ class DatasatpamController extends Controller
                 'status' => 'required|in:PKWT,PKWTT',
                 'no_pkwt_pkwtt' => 'required|unique:datasatpam,no_pkwt_pkwtt',
                 'kontrak' => 'nullable|string',
-                'terhitung_mulai_tugas' => 'required|date',
+            'terhitung_mulai_tugas' => 'required|date',
                 'jabatan' => 'required|in:Komandan Regu,Anggota',
-                'lokasikerja_id' => 'required|exists:lokasikerja,id',
+            'lokasikerja_id' => 'required|exists:lokasikerja,id',
                 'wilayah_kerja' => 'nullable|string',
                 'jenis_kelamin' => 'required|in:Laki-laki,Perempuan',
                 'tempat_lahir' => 'required|string',
-                'tanggal_lahir' => 'required|date',
+            'tanggal_lahir' => 'required|date',
                 'warga_negara' => 'required|in:WNI,WNA',
-                'agama' => 'required|string',
+            'agama' => 'required|string',
                 'no_hp' => 'required|string',
                 'email' => 'nullable|email',
                 'alamat' => 'required|string',
@@ -79,10 +79,10 @@ class DatasatpamController extends Controller
                 'nama_kontak_darurat' => 'nullable|string',
                 'nama_ahli_waris' => 'nullable|string',
                 'tempat_lahir_ahli_waris' => 'nullable|string',
-                'tanggal_lahir_ahli_waris' => 'nullable|date',
+            'tanggal_lahir_ahli_waris' => 'nullable|date',
                 'hub_ahli_waris' => 'nullable|string',
                 'status_nikah' => 'nullable|in:TK,K,K1,K2,K3,K4',
-                'jumlah_anak' => 'nullable|integer',
+            'jumlah_anak' => 'nullable|integer',
                 'npwp' => 'nullable|string',
                 'nama_bank' => 'nullable|string',
                 'no_rek' => 'nullable|unique:datasatpam,no_rek',
@@ -97,9 +97,9 @@ class DatasatpamController extends Controller
                 'no_bpjs_kesehatan' => 'nullable|unique:datasatpam,no_bpjs_kesehatan',
                 'no_bpjs_ketenagakerjaan' => 'nullable|unique:datasatpam,no_bpjs_ketenagakerjaan',
                 'ukuran_baju' => 'nullable|in:S,M,L,XL,XXL',
-                'ukuran_celana' => 'nullable|integer',
-                'ukuran_sepatu' => 'nullable|integer',
-                'ukuran_topi' => 'nullable|integer',
+            'ukuran_celana' => 'nullable|integer',
+            'ukuran_sepatu' => 'nullable|integer',
+            'ukuran_topi' => 'nullable|integer',
             ]);
             \Log::info('Validasi tambah satpam sukses');
             $data = new Datasatpam($request->all());
@@ -114,15 +114,15 @@ class DatasatpamController extends Controller
                 $data->usia = Carbon::parse($request->tanggal_lahir)->age;
             }
 
-            // Handle foto upload
-            if ($request->hasFile('foto')) {
-                $foto = $request->file('foto');
+        // Handle foto upload
+        if ($request->hasFile('foto')) {
+            $foto = $request->file('foto');
                 $filename = time() . '_' . $request->kode_satpam . '.' . $foto->getClientOriginalExtension();
-                $path = $foto->storeAs('foto_satpam', $filename, 'public');
-                $data->foto = $path;
-            }
+            $path = $foto->storeAs('foto_satpam', $filename, 'public');
+            $data->foto = $path;
+        }
 
-            $data->save();
+        $data->save();
             \Log::info('Data satpam berhasil disimpan', ['id' => $data->id]);
             return redirect()->route('datasatpam.index')
                 ->with('success', 'Data satpam berhasil ditambahkan');
@@ -148,17 +148,17 @@ class DatasatpamController extends Controller
         \Log::info('Request POST update', $request->all());
         try {
             $datasatpam = Datasatpam::findOrFail($id);
-            $request->validate([
+        $request->validate([
                 'nip' => 'required|unique:datasatpam,nip,' . $id . ',id',
                 'nik' => 'required|unique:datasatpam,nik,' . $id . ',id',
-                'foto' => 'nullable|image|mimes:jpeg,png,jpg|max:2048',
+            'foto' => 'nullable|image|mimes:jpeg,png,jpg|max:2048',
                 'nama' => 'required|string',
                 'status' => 'required|in:PKWT,PKWTT',
                 'no_pkwt_pkwtt' => 'required|unique:datasatpam,no_pkwt_pkwtt,' . $id . ',id',
                 'kontrak' => 'nullable|string',
                 'terhitung_mulai_tugas' => 'required|date',
                 'jabatan' => 'required|in:Komandan Regu,Anggota',
-                'lokasikerja_id' => 'required|exists:lokasikerja,id',
+            'lokasikerja_id' => 'required|exists:lokasikerja,id',
                 'wilayah_kerja' => 'nullable|string',
                 'jenis_kelamin' => 'required|in:Laki-laki,Perempuan',
                 'tempat_lahir' => 'required|string',
@@ -167,7 +167,7 @@ class DatasatpamController extends Controller
                 'agama' => 'required|string',
                 'no_hp' => 'required|string',
                 'email' => 'nullable|email',
-                'alamat' => 'required|string',
+            'alamat' => 'required|string',
                 'kelurahan' => 'nullable|string',
                 'kecamatan' => 'nullable|string',
                 'kabupaten' => 'nullable|string',
@@ -178,10 +178,10 @@ class DatasatpamController extends Controller
                 'nama_kontak_darurat' => 'nullable|string',
                 'nama_ahli_waris' => 'nullable|string',
                 'tempat_lahir_ahli_waris' => 'nullable|string',
-                'tanggal_lahir_ahli_waris' => 'nullable|date',
+            'tanggal_lahir_ahli_waris' => 'nullable|date',
                 'hub_ahli_waris' => 'nullable|string',
                 'status_nikah' => 'nullable|in:TK,K,K1,K2,K3,K4',
-                'jumlah_anak' => 'nullable|integer',
+            'jumlah_anak' => 'nullable|integer',
                 'npwp' => 'nullable|string',
                 'nama_bank' => 'nullable|string',
                 'no_rek' => 'nullable|unique:datasatpam,no_rek,' . $id . ',id',
@@ -196,10 +196,10 @@ class DatasatpamController extends Controller
                 'no_bpjs_kesehatan' => 'nullable|unique:datasatpam,no_bpjs_kesehatan,' . $id . ',id',
                 'no_bpjs_ketenagakerjaan' => 'nullable|unique:datasatpam,no_bpjs_ketenagakerjaan,' . $id . ',id',
                 'ukuran_baju' => 'nullable|in:S,M,L,XL,XXL',
-                'ukuran_celana' => 'nullable|integer',
-                'ukuran_sepatu' => 'nullable|integer',
-                'ukuran_topi' => 'nullable|integer',
-            ]);
+            'ukuran_celana' => 'nullable|integer',
+            'ukuran_sepatu' => 'nullable|integer',
+            'ukuran_topi' => 'nullable|integer',
+        ]);
             $data = $request->all();
             $data['ukuran_sepatu'] = $request->filled('ukuran_sepatu') ? $request->input('ukuran_sepatu') : 0;
             $data['warga_negara'] = $request->input('warga_negara');
@@ -210,12 +210,12 @@ class DatasatpamController extends Controller
             if ($request->hasFile('foto')) {
                 if ($datasatpam->foto) {
                     Storage::delete('public/' . $datasatpam->foto);
-                }
-                $foto = $request->file('foto');
-                $filename = time() . '_' . $datasatpam->kode_satpam . '.' . $foto->getClientOriginalExtension();
-                $path = $foto->storeAs('foto_satpam', $filename, 'public');
-                $data['foto'] = $path;
             }
+            $foto = $request->file('foto');
+                $filename = time() . '_' . $datasatpam->kode_satpam . '.' . $foto->getClientOriginalExtension();
+            $path = $foto->storeAs('foto_satpam', $filename, 'public');
+                $data['foto'] = $path;
+        }
             $datasatpam->update($data);
             \Log::info('Update satpam berhasil', ['id' => $id]);
             return redirect()->route('datasatpam.index')

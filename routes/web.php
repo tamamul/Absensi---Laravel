@@ -11,6 +11,7 @@ use App\Http\Controllers\UltgController;
 use App\Http\Controllers\UptController;
 use Illuminate\Support\Facades\Route;
 use App\Http\Middleware\Rolemiddleware;
+use App\Http\Controllers\PengajuanController;
 
 Route::get('/', function () {
     return view('welcome');
@@ -217,3 +218,11 @@ Route::get('/tabel', function () {
 Route::post('/jadwalsatpam/import-excel', [App\Http\Controllers\JadwalsatpamController::class, 'importExcel'])->name('jadwalsatpam.importExcel');
 
 Route::get('/sample_jadwal_satpam.xlsx', [App\Http\Controllers\JadwalsatpamController::class, 'downloadSampleExcel']);
+
+// Routes Pengajuan
+Route::get('/pengajuan', [PengajuanController::class, 'index'])->name('pengajuan.index');
+Route::get('/pengajuan/{id}', [PengajuanController::class, 'show'])->name('pengajuan.show');
+Route::put('/pengajuan/{id}/status', [PengajuanController::class, 'updateStatus'])->name('pengajuan.updateStatus');
+Route::delete('/pengajuan/{id}', [PengajuanController::class, 'destroy'])->name('pengajuan.destroy');
+Route::get('/pengajuan-filter', [PengajuanController::class, 'filter'])->name('pengajuan.filter');
+Route::get('/pengajuan-export', [PengajuanController::class, 'export'])->name('pengajuan.export');

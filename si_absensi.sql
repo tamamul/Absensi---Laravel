@@ -98,7 +98,7 @@ CREATE TABLE `datasatpam` (
   `tempat_lahir` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci DEFAULT NULL,
   `tanggal_lahir` date DEFAULT NULL,
   `usia` int DEFAULT NULL,
-  `warga_negara` enum('WNI','WNA') CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci DEFAULT NULL,
+  `warga_negara` enum('WNI','WNA') CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci DEFAULT 'WNI',
   `agama` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci DEFAULT NULL,
   `no_hp` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci DEFAULT NULL,
   `email` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci DEFAULT NULL,
@@ -131,9 +131,9 @@ CREATE TABLE `datasatpam` (
   `no_bpjs_kesehatan` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci DEFAULT NULL,
   `no_bpjs_ketenagakerjaan` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci DEFAULT NULL,
   `ukuran_baju` enum('S','M','L','XL','XXL') CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci DEFAULT NULL,
-  `ukuran_celana` int DEFAULT NULL,
-  `ukuran_sepatu` int DEFAULT NULL,
-  `ukuran_topi` int DEFAULT NULL,
+  `ukuran_celana` int DEFAULT '30',
+  `ukuran_sepatu` int DEFAULT '30',
+  `ukuran_topi` int DEFAULT '30',
   `created_at` timestamp NULL DEFAULT NULL,
   `updated_at` timestamp NULL DEFAULT NULL,
   PRIMARY KEY (`id`),
@@ -148,7 +148,7 @@ CREATE TABLE `datasatpam` (
   UNIQUE KEY `datasatpam_no_bpjs_ketenagakerjaan_unique` (`no_bpjs_ketenagakerjaan`),
   KEY `datasatpam_lokasikerja_id_foreign` (`lokasikerja_id`),
   CONSTRAINT `datasatpam_lokasikerja_id_foreign` FOREIGN KEY (`lokasikerja_id`) REFERENCES `lokasikerja` (`id`) ON DELETE CASCADE
-) ENGINE=InnoDB AUTO_INCREMENT=20 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=21 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 /*Data for the table `datasatpam` */
 
@@ -159,7 +159,8 @@ insert  into `datasatpam`(`id`,`kode_satpam`,`nip`,`nik`,`foto`,`nama`,`pekerjaa
 (15,'SAT3501','2309245002','3502162509840003','foto_satpam/1749477000_6846e68898aba.png','Arifin','Satpam','PKWTT','235/PKWTT-AMP/VIII/2023','Jatim','2023-09-01','Anggota',7,'Kota Madiun','Laki-laki','Ponorogo','1984-09-25',40,'WNI','Islam','085655862538','arifin489125@gmail.com','Dsn. Lengkong, Rt. 1/4','Jatigedong','Ploso','Jombang','Jawa Timur','Indonesia','Musarofah','085607040208','Pujianti','Pujianti','Madiun','1987-07-18','Istri','K1',12,'423833391621000','Mandiri','1710000651441','Arifin','1002301300526','SMK','Gada Pratama','13.16.887.109','2916/KTASATPAM-GP/II/2024/Ditbinmas','Jawa Timur','Kota Madiun','15003587498','1036744042','L',34,33,57,'2025-06-09 06:50:00','2025-06-12 09:37:47'),
 (16,'SAT8991','2231730068','3571090008493','foto_satpam/1749625368_68492a18287e4.png','Intan Dwi Septiani','Satpam','PKWT','222/PKWT-AMP/VIII/2023','Jatim','2023-09-01','Anggota',9,'Kota Kediri','Perempuan','Kediri','2003-09-13',21,NULL,'Islam','0895630599223','intandwi1309@gmail.com','kediri','banjaran','banjaran','Kediri','Jawa Timur','Indonesia','Rini','089876543','Rini','Rini','Kediri','1987-07-18','Ibu','TK',0,'42383339198765','BRI','34569987612345678','Intan Dwi','098765432345','SMA','Gada Pratama','13.16.887.110','2025/KTASATPAM-GP/II/2024/Ditbinmas','Jawa Timur','Kota Kediri','150035878764','1036744356','S',27,NULL,45,'2025-06-11 00:02:48','2025-06-11 00:02:48'),
 (18,'SAT6156','230924546','34567890654323','foto_satpam/1750255005_SAT6156.png','Rumah','Satpam','PKWT','298/PKWTT-AMP/VIII/2023','Jatim','2023-09-01','Komandan Regu',8,'Kota Kediri','Perempuan','Kediri','2003-09-13',21,'WNI','Islam','97989','intandwisept13@gmail.com','banjaran gg 2','banjaran','banjaran','Kediri','Jawa Timur','Indonesia','Rini','085807444616','Rini','Rini','Kediri','1987-07-15','Ibu','TK',0,'4238333919845','Bca','34569989876543','Intan Dwi','098765432323','SMA','Gada Madya','13.16.887.135','2087/KTASATPAM-GP/II/2024/Ditbinmas','Jawa Timur','Kota Kediri','15003587870u','1036744876','S',27,37,40,'2025-06-11 04:24:25','2025-06-18 06:56:45'),
-(19,'SAT3267','12345678','09876543234567','foto_satpam/1750255042_SAT3267.png','Intan Dwi Septiani','Satpam','PKWTT','123/PKWTT-AMP/VIII/2023','Jatim','2025-06-02','Anggota',8,'Kota Kediri','Perempuan','Kediri','2016-06-07',32,'WNI','Islam','9798908610','intandwi01@gmail.com','banjaran gg 2','banjaran','Kota','Kediri','Jawa Timur','Indonesia','Musarofah','085807444616','Pujianti','Pujianti','Madiun','2007-03-14','Ibu','K',0,'09876543234','Mandiri','098765234567','Intan Dwi','23456543','SMK','Gada Pratama','13.13.887.653','2011/KTASATPAM-GP/II/2024/Ditbinmas','Jawa Timur','Kota Kediri','15003587870876','2345789098','M',34,NULL,44,'2025-06-16 07:04:10','2025-06-18 17:48:01');
+(19,'SAT3267','12345678','09876543234567','foto_satpam/1751536471_SAT3267.jpg','Intan Dwi Septiani','Satpam','PKWTT','123/PKWTT-AMP/VIII/2023','Jatim','2025-06-02','Anggota',8,'Kota Kediri','Perempuan','Kediri','2016-06-07',9,'WNI','Islam','9798908610','intandwi01@gmail.com','banjaran gg 2','banjaran','Kota','Kediri','Jawa Timur','Indonesia','Musarofah','085807444616','Pujianti','Pujianti','Madiun','2007-03-14','Ibu','K',0,'09876543234','Mandiri','098765234567','Intan Dwi','23456543','SMK','Gada Pratama','13.13.887.653','2011/KTASATPAM-GP/II/2024/Ditbinmas','Jawa Timur','Kota Kediri','15003587870876','2345789098','M',34,NULL,44,'2025-06-16 07:04:10','2025-07-03 09:54:31'),
+(20,'STPM268','1234512312','12345123124','foto_satpam/1751538639_STPM268.jpg','dsf','Satpam','PKWT','2','jatin','2025-07-03','Anggota',1,'Kota Malang','Laki-laki','Malang','2025-07-03',0,'WNI','Islam','082333546365','frank2ie.steinlie@gmail.com','22123','JUNREJO','JUNREJO','Kota Batu','JAWA TIMUR','Indonesia','ssss','081249213511','Sri Wijayanti','Sri Wijayanti','Malang','2025-07-03','Istri','TK',3,'098765432343','Mandiri','11500068242793','EDY PURWITO','10023012983093','SMA','Gada Pratama','13.13.887.0562','2866/KTASATPAM-GP/II/2024/Ditbinmas2','Polda Jawa Timur','Kota Batu','150035878708763','23457890983','L',30,30,55,'2025-07-03 10:30:39','2025-07-04 06:29:13');
 
 /*Table structure for table `failed_jobs` */
 
@@ -194,7 +195,7 @@ CREATE TABLE `jadwal` (
   PRIMARY KEY (`id`),
   KEY `satpam_id` (`satpam_id`),
   CONSTRAINT `jadwal_ibfk_1` FOREIGN KEY (`satpam_id`) REFERENCES `datasatpam` (`id`) ON DELETE CASCADE
-) ENGINE=InnoDB AUTO_INCREMENT=54 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=66 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 /*Data for the table `jadwal` */
 
@@ -224,7 +225,19 @@ insert  into `jadwal`(`id`,`satpam_id`,`tanggal`,`shift`,`keterangan`,`created_a
 (50,2,'2025-06-19','S',NULL,'2025-06-29 15:16:05','2025-06-29 15:16:05'),
 (51,2,'2025-06-19','M',NULL,'2025-06-29 15:16:05','2025-06-29 15:16:05'),
 (52,2,'2025-06-20','S',NULL,'2025-06-29 15:16:05','2025-06-29 15:16:05'),
-(53,2,'2025-06-29','L',NULL,'2025-06-29 15:16:05','2025-06-29 15:16:05');
+(53,2,'2025-06-29','L',NULL,'2025-06-29 15:16:05','2025-06-29 15:16:05'),
+(54,20,'2025-07-10','S',NULL,'2025-07-03 11:07:27','2025-07-03 11:07:27'),
+(55,20,'2025-07-11','S',NULL,'2025-07-03 11:07:27','2025-07-03 11:07:27'),
+(56,1,'2025-07-10','P',NULL,'2025-07-03 11:10:44','2025-07-03 11:10:44'),
+(57,1,'2025-07-11','P',NULL,'2025-07-03 11:10:44','2025-07-03 11:10:44'),
+(58,1,'2025-07-12','P',NULL,'2025-07-03 11:10:44','2025-07-03 11:10:44'),
+(59,20,'2025-07-12','S',NULL,'2025-07-03 11:10:45','2025-07-03 11:10:45'),
+(60,2,'2025-07-10','P',NULL,'2025-07-03 11:10:45','2025-07-03 11:10:45'),
+(61,2,'2025-07-10','S',NULL,'2025-07-03 11:10:45','2025-07-03 11:10:45'),
+(62,2,'2025-07-11','P',NULL,'2025-07-03 11:10:45','2025-07-03 11:10:45'),
+(63,2,'2025-07-11','S',NULL,'2025-07-03 11:10:45','2025-07-03 11:10:45'),
+(64,2,'2025-07-12','P',NULL,'2025-07-03 11:10:45','2025-07-03 11:10:45'),
+(65,2,'2025-07-12','S',NULL,'2025-07-03 11:10:45','2025-07-03 11:10:45');
 
 /*Table structure for table `job_batches` */
 
@@ -329,6 +342,34 @@ CREATE TABLE `password_reset_tokens` (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 /*Data for the table `password_reset_tokens` */
+
+/*Table structure for table `pengajuan` */
+
+DROP TABLE IF EXISTS `pengajuan`;
+
+CREATE TABLE `pengajuan` (
+  `id` int NOT NULL AUTO_INCREMENT,
+  `satpam_id` bigint unsigned NOT NULL,
+  `tanggal_pengajuan` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  `jenis_pengajuan` enum('izin','sakit','cuti','pulang_cepat') COLLATE utf8mb4_general_ci NOT NULL,
+  `tanggal_mulai` date NOT NULL,
+  `tanggal_selesai` date NOT NULL,
+  `alasan` text COLLATE utf8mb4_general_ci NOT NULL,
+  `bukti_foto` varchar(255) COLLATE utf8mb4_general_ci DEFAULT NULL,
+  `status` enum('pending','disetujui','ditolak') COLLATE utf8mb4_general_ci NOT NULL DEFAULT 'pending',
+  `catatan_admin` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci DEFAULT '-',
+  `created_at` timestamp NULL DEFAULT CURRENT_TIMESTAMP,
+  `updated_at` timestamp NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+  PRIMARY KEY (`id`),
+  KEY `satpam_id` (`satpam_id`),
+  CONSTRAINT `pengajuan_ibfk_1` FOREIGN KEY (`satpam_id`) REFERENCES `datasatpam` (`id`) ON DELETE CASCADE
+) ENGINE=InnoDB AUTO_INCREMENT=5 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+/*Data for the table `pengajuan` */
+
+insert  into `pengajuan`(`id`,`satpam_id`,`tanggal_pengajuan`,`jenis_pengajuan`,`tanggal_mulai`,`tanggal_selesai`,`alasan`,`bukti_foto`,`status`,`catatan_admin`,`created_at`,`updated_at`) values 
+(2,2,'2025-07-04 12:10:18','izin','2025-07-04','2025-07-04','ada acara','http://127.0.0.1/absensi/uploads_bukti_pengajuan/6867623ae7b99_h3.jpg','ditolak','tetap masuk','2025-07-04 12:10:18','2025-07-04 06:37:38'),
+(4,2,'2025-07-04 12:50:19','izin','2025-07-04','2025-07-05','coba','http://127.0.0.1/absensi/uploads_bukti_pengajuan/68676b9bb09d2_w3.jpg','disetujui','okee','2025-07-04 12:50:19','2025-07-04 06:36:01');
 
 /*Table structure for table `sessions` */
 
