@@ -13,6 +13,7 @@ class Jadwalsatpam extends Model
 
     protected $fillable = [
         'satpam_id',
+        'regu_id',
         'upt_id',
         'ultg_id',
         'lokasi_kerja_id',
@@ -41,5 +42,10 @@ class Jadwalsatpam extends Model
     public function datasatpam()
     {
         return $this->belongsTo(Datasatpam::class, 'satpam_id');
+    }
+
+    public function regu()
+    {
+        return $this->belongsTo(Regu::class, 'regu_id');
     }
 }

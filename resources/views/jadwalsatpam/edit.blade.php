@@ -131,15 +131,12 @@
 
                                                 {{-- Shift P --}}
                                                 <td>
-                                                    <select name="jadwal[{{ $tanggal }}][P]"
-                                                        class="form-control form-control-sm">
-                                                        <option value="">Pilih Satpam</option>
+                                                    <select name="jadwal[{{ $tanggal }}][P][]" class="form-control form-control-sm" multiple>
                                                         @foreach ($satpamList as $satpam)
                                                             @php
-                                                                $currentShift = $jadwalData[$fullDate]['P'] ?? '';
+                                                                $currentShifts = $jadwalData[$fullDate]['P'] ?? [];
                                                             @endphp
-                                                            <option value="{{ $satpam->id }}"
-                                                                {{ $currentShift == $satpam->id ? 'selected' : '' }}>
+                                                            <option value="{{ $satpam->id }}" {{ in_array($satpam->id, $currentShifts) ? 'selected' : '' }}>
                                                                 {{ $satpam->nama }}
                                                             </option>
                                                         @endforeach
@@ -148,15 +145,12 @@
 
                                                 {{-- Shift S --}}
                                                 <td>
-                                                    <select name="jadwal[{{ $tanggal }}][S]"
-                                                        class="form-control form-control-sm">
-                                                        <option value="">Pilih Satpam</option>
+                                                    <select name="jadwal[{{ $tanggal }}][S][]" class="form-control form-control-sm" multiple>
                                                         @foreach ($satpamList as $satpam)
                                                             @php
-                                                                $currentShift = $jadwalData[$fullDate]['S'] ?? '';
+                                                                $currentShifts = $jadwalData[$fullDate]['S'] ?? [];
                                                             @endphp
-                                                            <option value="{{ $satpam->id }}"
-                                                                {{ $currentShift == $satpam->id ? 'selected' : '' }}>
+                                                            <option value="{{ $satpam->id }}" {{ in_array($satpam->id, $currentShifts) ? 'selected' : '' }}>
                                                                 {{ $satpam->nama }}
                                                             </option>
                                                         @endforeach
@@ -165,15 +159,12 @@
 
                                                 {{-- Shift M --}}
                                                 <td>
-                                                    <select name="jadwal[{{ $tanggal }}][M]"
-                                                        class="form-control form-control-sm">
-                                                        <option value="">Pilih Satpam</option>
+                                                    <select name="jadwal[{{ $tanggal }}][M][]" class="form-control form-control-sm" multiple>
                                                         @foreach ($satpamList as $satpam)
                                                             @php
-                                                                $currentShift = $jadwalData[$fullDate]['M'] ?? '';
+                                                                $currentShifts = $jadwalData[$fullDate]['M'] ?? [];
                                                             @endphp
-                                                            <option value="{{ $satpam->id }}"
-                                                                {{ $currentShift == $satpam->id ? 'selected' : '' }}>
+                                                            <option value="{{ $satpam->id }}" {{ in_array($satpam->id, $currentShifts) ? 'selected' : '' }}>
                                                                 {{ $satpam->nama }}
                                                             </option>
                                                         @endforeach
@@ -182,15 +173,12 @@
 
                                                 {{-- Shift L --}}
                                                 <td>
-                                                    <select name="jadwal[{{ $tanggal }}][L]"
-                                                        class="form-control form-control-sm">
-                                                        <option value="">Pilih Satpam</option>
+                                                    <select name="jadwal[{{ $tanggal }}][L][]" class="form-control form-control-sm" multiple>
                                                         @foreach ($satpamList as $satpam)
                                                             @php
-                                                                $currentShift = $jadwalData[$fullDate]['L'] ?? '';
+                                                                $currentShifts = $jadwalData[$fullDate]['L'] ?? [];
                                                             @endphp
-                                                            <option value="{{ $satpam->id }}"
-                                                                {{ $currentShift == $satpam->id ? 'selected' : '' }}>
+                                                            <option value="{{ $satpam->id }}" {{ in_array($satpam->id, $currentShifts) ? 'selected' : '' }}>
                                                                 {{ $satpam->nama }}
                                                             </option>
                                                         @endforeach
@@ -251,6 +239,11 @@
         .table-calendar select {
             width: 100%;
             font-size: 11px;
+        }
+
+        .table-calendar select[multiple] {
+            height: 80px;
+            min-height: 60px;
         }
 
         .table-calendar th {

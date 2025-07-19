@@ -110,9 +110,12 @@ class JadwalsatpamController extends Controller
                 ->whereYear('tanggal', $tahun)
                 ->get();
 
-            // Mapping: [tanggal][shift] = satpam_id
+            // Mapping: [tanggal][shift] = array of satpam_ids
             foreach ($jadwalRows as $jadwal) {
-                $jadwalData[$jadwal->tanggal][$jadwal->shift] = $jadwal->satpam_id;
+                if (!isset($jadwalData[$jadwal->tanggal][$jadwal->shift])) {
+                    $jadwalData[$jadwal->tanggal][$jadwal->shift] = [];
+                }
+                $jadwalData[$jadwal->tanggal][$jadwal->shift][] = $jadwal->satpam_id;
             }
         }
 
@@ -194,9 +197,12 @@ class JadwalsatpamController extends Controller
                 ->whereYear('tanggal', $tahun)
                 ->get();
 
-            // Mapping: [tanggal][shift] = satpam_id
+            // Mapping: [tanggal][shift] = array of satpam_ids
             foreach ($jadwalRows as $jadwal) {
-                $jadwalData[$jadwal->tanggal][$jadwal->shift] = $jadwal->satpam_id;
+                if (!isset($jadwalData[$jadwal->tanggal][$jadwal->shift])) {
+                    $jadwalData[$jadwal->tanggal][$jadwal->shift] = [];
+                }
+                $jadwalData[$jadwal->tanggal][$jadwal->shift][] = $jadwal->satpam_id;
             }
         }
 
@@ -230,13 +236,17 @@ class JadwalsatpamController extends Controller
         foreach ($request->jadwal as $tanggal => $shifts) {
             $fullDate = sprintf('%04d-%02d-%02d', $request->tahun, $request->bulan, $tanggal);
 
-            foreach ($shifts as $shift => $satpamId) {
-                if ($satpamId) { // Jika satpam dipilih
-                    Jadwalsatpam::create([
-                        'satpam_id' => $satpamId,
-                        'tanggal' => $fullDate,
-                        'shift' => $shift,
-                    ]);
+            foreach ($shifts as $shift => $satpamIds) {
+                if (is_array($satpamIds) && count($satpamIds) > 0) {
+                    foreach ($satpamIds as $satpamId) {
+                        if ($satpamId) { // Jika satpam dipilih
+                            Jadwalsatpam::create([
+                                'satpam_id' => $satpamId,
+                                'tanggal' => $fullDate,
+                                'shift' => $shift,
+                            ]);
+                        }
+                    }
                 }
             }
         }

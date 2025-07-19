@@ -26,6 +26,18 @@
                         </a>
                     </li>
                     <li class="nav-item">
+                        <a href="/regu">
+                            <i class="fas fa-users"></i>
+                            <span>Kelola Regu</span>
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a href="/regu/penjadwalan">
+                            <i class="fas fa-calendar-plus"></i>
+                            <span>Penjadwalan Regu</span>
+                        </a>
+                    </li>
+                    <li class="nav-item">
                         <a href="/upt">
                             <i class="fas fa-building"></i>
                             <span>Data UPT</span>

@@ -1,0 +1,109 @@
+@extends('layouts.master')
+@section('title', 'Tambah Regu')
+@section('content')
+<style>
+input[type="checkbox"].form-check-input {
+    appearance: checkbox !important;
+    -webkit-appearance: checkbox !important;
+    width: 18px !important;
+    height: 18px !important;
+    background: initial !important;
+    border: initial !important;
+    box-shadow: none !important;
+    outline: none !important;
+}
+</style>
+<div class="page-inner">
+    <div class="page-header">
+        <h4 class="page-title">Tambah Regu</h4>
+    </div>
+    <div class="row mt-3">
+        <div class="col-md-10 offset-md-1">
+            <div class="card">
+                <div class="card-body">
+                    <form action="{{ route('regu.store') }}" method="POST" id="formRegu">
+                        @csrf
+                        <div class="form-group">
+                            <label>Nama Regu</label>
+                            <input type="text" name="nama_regu" class="form-control" required>
+                        </div>
+                        <div class="form-group">
+                            <label>UPT</label>
+                            <select name="upt_id" id="upt_id" class="form-control">
+                                <option value="">Pilih UPT</option>
+                                @foreach($upts as $upt)
+                                    <option value="{{ $upt->id }}">{{ $upt->nama_upt }}</option>
+                                @endforeach
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label>ULTG</label>
+                            <select name="ultg_id" id="ultg_id" class="form-control">
+                                <option value="">Pilih ULTG</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label>Lokasi Kerja</label>
+                            <select name="lokasikerja_id" id="lokasikerja_id" class="form-control">
+                                <option value="">Pilih Lokasi Kerja</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label>Pilih Anggota Satpam</label>
+                            <div id="satpam-list">
+                                <span class="text-muted">Pilih lokasi kerja terlebih dahulu</span>
+                            </div>
+                        </div>
+                        <button type="submit" class="btn btn-success">Simpan</button>
+                        <a href="{{ route('regu.index') }}" class="btn btn-secondary">Batal</a>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<script>
+    $('#upt_id').on('change', function() {
+        var uptID = $(this).val();
+        $('#ultg_id').html('<option value="">Pilih ULTG</option>');
+        $('#lokasikerja_id').html('<option value="">Pilih Lokasi Kerja</option>');
+        $('#satpam-list').html('<span class="text-muted">Pilih lokasi kerja terlebih dahulu</span>');
+        if (uptID) {
+            $.get('/get-ultg/' + uptID, function(data) {
+                $.each(data, function(id, nama) {
+                    $('#ultg_id').append('<option value="' + id + '">' + nama + '</option>');
+                });
+            });
+        }
+    });
+    $('#ultg_id').on('change', function() {
+        var ultgID = $(this).val();
+        $('#lokasikerja_id').html('<option value="">Pilih Lokasi Kerja</option>');
+        $('#satpam-list').html('<span class="text-muted">Pilih lokasi kerja terlebih dahulu</span>');
+        if (ultgID) {
+            $.get('/get-lokasi/' + ultgID, function(data) {
+                $.each(data, function(id, nama) {
+                    $('#lokasikerja_id').append('<option value="' + id + '">' + nama + '</option>');
+                });
+            });
+        }
+    });
+    $('#lokasikerja_id').on('change', function() {
+        var lokasiID = $(this).val();
+        $('#satpam-list').html('<span class="text-muted">Memuat data satpam...</span>');
+        if (lokasiID) {
+            $.get('/get-satpam/' + lokasiID, function(data) {
+                var html = '';
+                $.each(data, function(id, nama) {
+                    html += '<div style="margin-bottom:8px;"><input type="checkbox" name="satpam_id[]" value="'+id+'" id="satpam'+id+'"> <label for="satpam'+id+'">'+nama+'</label></div>';
+                });
+                if(html == '') html = '<span class="text-danger">Tidak ada satpam di lokasi ini</span>';
+                $('#satpam-list').html(html);
+            });
+        } else {
+            $('#satpam-list').html('<span class="text-muted">Pilih lokasi kerja terlebih dahulu</span>');
+        }
+    });
+</script>
+@endsection 

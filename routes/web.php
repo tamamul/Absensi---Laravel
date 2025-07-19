@@ -226,3 +226,12 @@ Route::put('/pengajuan/{id}/status', [PengajuanController::class, 'updateStatus'
 Route::delete('/pengajuan/{id}', [PengajuanController::class, 'destroy'])->name('pengajuan.destroy');
 Route::get('/pengajuan-filter', [PengajuanController::class, 'filter'])->name('pengajuan.filter');
 Route::get('/pengajuan-export', [PengajuanController::class, 'export'])->name('pengajuan.export');
+
+// Route Kelola Regu
+Route::resource('regu', App\Http\Controllers\ReguController::class)->except(['show']);
+Route::get('regu/penjadwalan', [App\Http\Controllers\ReguController::class, 'penjadwalanReguForm'])->name('regu.penjadwalan.form');
+Route::post('regu/penjadwalan/store', [App\Http\Controllers\ReguController::class, 'penjadwalanReguStore'])->name('regu.penjadwalan.store');
+Route::get('/get-satpam/{lokasikerja_id}', [App\Http\Controllers\ReguController::class, 'getSatpam']);
+Route::get('/get-regu-by-lokasi/{lokasikerja_id}', [App\Http\Controllers\ReguController::class, 'getReguByLokasi']);
+Route::get('regu/penjadwalan/edit/{id}', [App\Http\Controllers\ReguController::class, 'editPenjadwalanRegu'])->name('regu.penjadwalan.edit');
+Route::delete('regu/penjadwalan/delete/{id}', [App\Http\Controllers\ReguController::class, 'deletePenjadwalanRegu'])->name('regu.penjadwalan.delete');
