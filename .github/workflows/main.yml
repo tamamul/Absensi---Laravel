@@ -1,0 +1,47 @@
+name: Build Laravel Deploy ZIP
+
+on:
+  push:
+    branches:
+      - main   # ganti sesuai branch kamu
+  workflow_dispatch:
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Setup PHP
+        uses: shivammathur/setup-php@v2
+        with:
+          php-version: '8.1' # ganti sesuai Laravel requirement
+          extensions: mbstring, bcmath, xml, ctype, json
+          ini-values: post_max_size=256M, upload_max_filesize=256M
+
+      - name: Install Composer dependencies
+        run: composer install --no-dev --optimize-autoloader
+
+      - name: Clear Laravel caches
+        run: |
+          php artisan config:clear
+          php artisan route:clear
+          php artisan view:clear
+
+      - name: Prepare Laravel for deployment
+        run: |
+          php artisan config:cache
+          php artisan route:cache
+          php artisan view:cache
+
+      - name: Create deploy ZIP
+        run: |
+          zip -r laravel-deploy.zip . -x ".git/*" "node_modules/*" "tests/*"
+
+      - name: Upload ZIP as artifact
+        uses: actions/upload-artifact@v3
+        with:
+          name: laravel-deploy
+          path: laravel-deploy.zip
