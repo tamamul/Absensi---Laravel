@@ -41,7 +41,7 @@ jobs:
           zip -r laravel-deploy.zip . -x ".git/*" "node_modules/*" "tests/*"
 
       - name: Upload ZIP as artifact
-        uses: actions/upload-artifact@v3
+        uses: actions/upload-artifact@v4
         with:
           name: laravel-deploy
           path: laravel-deploy.zip
